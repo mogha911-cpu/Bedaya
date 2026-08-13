@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BedaiaConstruct - الحسابات التلقائية الذكية</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --secondary: #0ea5e9;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 12px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 550px;
+            margin: auto;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            text-align: center;
+            color: #fff;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .search-box { margin-bottom: 20px; }
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px;
+            box-sizing: border-box;
+            background: #0f172a;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+        .search-box input:focus { outline: none; border-color: var(--primary); }
+
+        .section-title {
+            background: linear-gradient(90deg, rgba(79, 70, 229, 0.2), transparent);
+            color: var(--secondary);
+            padding: 10px 14px;
+            margin-top: 18px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-right: 4px solid var(--secondary);
+        }
+
+        ul { list-style: none; padding: 0; margin: 8px 0; }
+        li {
+            background: #273548;
+            margin: 6px 0;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        li:hover { background: #334155; transform: translateX(-3px); border-color: var(--primary-light); }
+        li span { font-size: 1.1rem; }
+        
+        .backup-container {
+            margin-top: 25px;
+            padding: 14px;
+            background: #0f172a;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid var(--border-color);
+        }
+        .backup-row { display: flex; gap: 10px; }
+        
+        button {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+        button:active { opacity: 0.8; }
+        .btn-backup { background: #334155; color: #fff; flex: 1; }
+        .btn-share-all { background: var(--accent-green) !important; color: white; width: 100%; }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            box-sizing: border-box;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            color: #fff;
+            font-size: 1.15rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Calculator Helper Box */
+        .calc-bar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+            background: #0f172a;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px dashed var(--border-color);
+        }
+        .calc-bar button {
+            background: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            flex: 1;
+            border-radius: 4px;
+        }
+
+        .btn-container { display: flex; justify-content: space-between; gap: 8px; margin-top: 15px; }
+        .btn-save { background: var(--accent-green); color: white; flex: 1; }
+        .btn-edit { background: var(--accent-yellow); color: #000; flex: 0.4; }
+        .btn-delete { background: var(--accent-red); color: white; flex: 0.4; }
+        .btn-share { background: var(--secondary); color: white; flex: 0.4; }
+        .btn-close { background: #475569; color: white; flex: 1; }
+        
+        .output-box {
+            margin-top: 15px;
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .record-item {
+            background: #1e293b;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: #fff;
+        }
+        .record-actions {
+            margin-top: 8px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .record-actions button {
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            flex: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🏗️ BedaiaConstruct</h2>
+
+    <!-- محرك البحث العام -->
+    <div class="search-box">
+        <input type="text" id="globalSearch" placeholder="🔍 بحث شامل في كل الأقسام..." onkeyup="globalSearchFunction()">
+    </div>
+
+    <div class="section-title">1. المشاريع الهندسية والموقع</div>
+    <ul>
+        <li onclick="openModule('إدارة المشاريع', ['مشاريع تحت التنفيذ', 'مشاريع مكتملة', 'الرسومات والمخططات الهندسية', 'المواد المطلوبة للموقع', 'المصاريف التشغيلية للموقع'])">إدارة ومتابعة المشاريع <span>📁</span></li>
+        <li onclick="openModule('دفتر يومية الموقع', ['سجل العمال والمعدات اليومي', 'حالة الطقس وسير العمل'])">دفتر يومية الموقع اليومي <span>📅</span></li>
+        <li onclick="openModule('معالجة المشاكل والطوارئ', ['مشاكل معلقة لم تُحل', 'مشاكل تم علاجها'])">معالجة المشاكل والطوارئ <span>⚠️</span></li>
+    </ul>
+
+    <div class="section-title">2. المقاولين الفرعيين والعقود</div>
+    <ul>
+        <li onclick="openModule('المقاولين الفرعيين', ['مقاول حديد (تسليح)', 'مقاول نجارة وتخشيب', 'مقاول طابوك وبناء', 'مقاول بلستر (لياسة)', 'مقاول صحي وكهرباء', 'مقاول تشطيبات عامة'])">مقاولي الباطن والمستخلصات <span>📝</span></li>
+        <li onclick="openModule('عروض الأسعار وجداول الكميات (BOQ)', ['عروض الأسعار المقدمة', 'جداول الكميات المعتمدة (BOQ)'])">عروض الأسعار وجداول الكميات (BOQ) <span>📊</span></li>
+    </ul>
+
+    <div class="section-title">3. المشتريات والمخازن واللوجستيات</div>
+    <ul>
+        <li onclick="openModule('الموردين وطلبات الشراء', ['قائمة الموردين', 'طلبات الشراء المعلقة', 'فواتير المشتريات'])">الموردين وطلبات الشراء <span>🛒</span></li>
+        <li onclick="openModule('المستودعات والجرد', ['مستودع الموقع الرئيسي', 'حركات الوارد والصادر', 'جرد المواد'])">المستودعات والجرد <span>📦</span></li>
+        <li onclick="openModule('سيارات نقل العمال والمعدات', ['سجل أساطيل سيارات النقل والباصات', 'حركة تشغيل وتوصيل العمال', 'مصاريف الوقود والصيانة الدورية', 'الرخص والمخالفات المرورية'])">إدارة سيارات النقل واللوجستيات <span>🚚</span></li>
+    </ul>
+
+    <div class="section-title">4. الشؤون المالية والموارد البشرية</div>
+    <ul>
+        <li onclick="openModule('الخزينة والبنوك', ['الخزينة النقدية اليومية', 'حسابات البنوك', 'المصروفات النثرية'])">الخزينة والبنوك والمصروفات <span>💰</span></li>
+        <li onclick="openModule('حسابات العملاء', ['حسابات العملاء النشطين', 'الأرصدة المستحقة ومستخلصات المالك'])">حسابات العملاء <span>👥</span></li>
+        <li onclick="openModule('سندات القبض والصرف', ['سندات القبض النقدية', 'سندات الصرف'])">سندات القبض والصرف <span>📄</span></li>
+        <li onclick="openModule('سجلات الدوام والرواتب', ['سجل الحضور والدوام اليومي', 'مسيرات الرواتب الشهرية', 'السلف والخصومات'])">سجلات الدوام ومسيرات الرواتب <span>👥</span></li>
+        <li onclick="openModule('حسابات ضريبة القيمة المضافة', ['إقرارات ضريبية', 'فواتير خاضعة للضريبة'])">ضريبة القيمة المضافة (VAT) <span>🧮</span></li>
+    </ul>
+
+    <!-- أزرار النسخ الاحتياطي والمشاركة -->
+    <div class="backup-container">
+        <div class="backup-row">
+            <button class="btn-backup" onclick="exportBackup()">📥 تصدير ملف</button>
+            <button class="btn-backup" onclick="document.getElementById('importFile').click()">📤 استعادة</button>
+            <input type="file" id="importFile" style="display:none" onchange="importBackup(event)">
+        </div>
+        <button class="btn-share-all" onclick="shareAllDataWhatsApp()">📢 مشاركة كافة البيانات (واتساب)</button>
+    </div>
+</div>
+
+<!-- نافذة إدارة القسم والفولدرات الفرعية -->
+<div class="modal" id="dataModal">
+    <div class="modal-content">
+        <h3>
+            <span id="modalTitle">عنوان القسم</span>
+            <button class="btn-share" style="padding:4px 10px; font-size:0.75rem;" onclick="shareCurrentFolder()">مشاركة الفولدر 📤</button>
+        </h3>
+        
+        <div class="form-group" style="margin-top: 12px;">
+            <label>اختر التصنيف أو الفولدر الفرعي:</label>
+            <select id="folderSelect" onclick="loadSavedData()" onchange="loadSavedData()"></select>
+        </div>
+
+        <div class="form-group">
+            <label id="labelField1">اسم البند / المشروع / المقاول:</label>
+            <input type="text" id="inputField1" placeholder="اكتب هنا...">
+        </div>
+        
+        <div class="form-group">
+            <label id="labelField2">التفاصيل أو المبالغ (يمكنك كتابة عمليات مثل: 1500 + 300):</label>
+            <div class="calc-bar">
+                <button type="button" onclick="calculateExpression()">🧮 احسب التلقائي الآن</button>
+            </div>
+            <textarea id="inputField2" rows="3" placeholder="اكتب المبالغ أو التفاصيل هنا... (سيتم الحساب تلقائياً عند الحفظ)"></textarea>
+        </div>
+        
+        <input type="hidden" id="editIndex" value="-1">
+
+        <div class="btn-container">
+            <button class="btn-save" id="saveBtn" onclick="saveData()">حفظ كجديد</button>
+            <button class="btn-close" onclick="closeForm()">إغلاق</button>
+        </div>
+
+        <div class="output-box">
+            <strong style="color: var(--secondary);">البيانات المسجلة في هذا الفولدر:</strong>
+            <div id="savedItems" style="margin-top: 8px; color: var(--text-muted);">لا توجد بيانات مسجلة.</div>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة نتائج البحث العام -->
+<div class="modal" id="searchModal">
+    <div class="modal-content">
+        <h3>نتائج البحث الشامل</h3>
+        <div id="searchResults" style="margin-top: 10px; max-height: 60vh; overflow-y: auto;"></div>
+        <div class="btn-container" style="margin-top: 15px;">
+            <button class="btn-close" onclick="document.getElementById('searchModal').style.display='none'">إغلاق البحث</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentModuleKey = '';
+
+    function openModule(title, subFolders) {
+        currentModuleKey = title;
+        document.getElementById('modalTitle').innerText = title;
+        
+        let select = document.getElementById('folderSelect');
+        select.innerHTML = subFolders.map(f => `<option value="${f}">${f}</option>`).join('');
+        
+        resetForm();
+        document.getElementById('dataModal').style.display = 'flex';
+        loadSavedData();
+    }
+
+    function closeForm() {
+        document.getElementById('dataModal').style.display = 'none';
+    }
+
+    function resetForm() {
+        document.getElementById('inputField1').value = '';
+        document.getElementById('inputField2').value = '';
+        document.getElementById('editIndex').value = '-1';
+        document.getElementById('saveBtn').innerText = 'حفظ كجديد';
+    }
+
+    function getStorageKey() {
+        let folder = document.getElementById('folderSelect').value;
+        return 'erp_' + currentModuleKey + '_' + folder;
+    }
+
+    // محرك الحسابات الآلي (يعالج أي معادلة أو أرقام من النص)
+    function calculateExpression() {
+        let text = document.getElementById('inputField2').value;
+        if (!text.trim()) {
+            alert('يرجى كتابة أرقام أو عملية حسابية في خانة التفاصيل أولاً.');
+            return;
+        }
+        try {
+            // تنظيف النص والسماح فقط بالأرقام والعمليات الرياضية الحسابية الآمنة
+            let sanitized = text.replace(/[^\d+\-*/().]/g, '');
+            if(sanitized) {
+                let result = Function('return ' + sanitized)();
+                document.getElementById('inputField2').value = text + '\n💡 [النتيجة الحسابية المحسوبة تلقائياً: ' + result + ']';
+            } else {
+                alert('لم يتم العثور على أرقام صحيحة للحساب.');
+            }
+        } catch(e) {
+            alert('خطأ في صيغة العملية الحسابية، تأكد من كتابة الأرقام بشكل صحيح.');
+        }
+    }
+
+    function saveData() {
+        const val1 = document.getElementById('inputField1').value;
+        let val2 = document.getElementById('inputField2').value;
+        let editIdx = parseInt(document.getElementById('editIndex').value);
+
+        if(!val1) {
+            alert('يرجى إدخال الحقل الأساسي على الأقل');
+            return;
+        }
+
+        // محاولة استخراج وحساب العمليات الحسابية تلقائياً عند الضغط على حفظ إذا وُجدت أرقام وعلامات جمع وطرح
+        try {
+            let lines = val2.split('\n');
+            let lastLine = lines[lines.length - 1];
+            // إذا كان النص يحتوي على عمليات رياضية ولم يتم حسابها بعد
+            if(/[+\-*/]/.test(val2) && !val2.includes('النتيجة الحسابية')) {
+                let sanitized = val2.replace(/[^\d+\-*/().\n]/g, '');
+                // حساب السطر الأخير أو المجموع البسيط
+                let result = Function('return ' + sanitized)();
+                if(result !== undefined && !isNaN(result)) {
+                    val2 += '\n💡 [المجموع التلقائي: ' + result + ']';
+                }
+            }
+        } catch(e) {
+            // إذا فشل الحساب الآلي يحفظ النص كما هو دون إزعاج المستخدم
+        }
+
+        let key = getStorageKey();
+        let records = JSON.parse(localStorage.getItem(key) || '[]');
+
+        if(editIdx === -1) {
+            records.push({val1, val2, date: new Date().toLocaleDateString('ar-EG')});
+        } else {
+            records[editIdx].val1 = val1;
+            records[editIdx].val2 = val2;
+            records[editIdx].date = new Date().toLocaleDateString('ar-EG') + ' (معدل)';
+        }
+
+        localStorage.setItem(key, JSON.stringify(records));
+        alert('تم الحساب والحفظ بنجاح!');
+        resetForm();
+        loadSavedData();
+    }
+
+    function loadSavedData() {
+        let key = getStorageKey();
+        let records = JSON.parse(localStorage.getItem(key) || '[]');
+        let container = document.getElementById('savedItems');
+        
+        if(records.length === 0) {
+            container.innerHTML = '<span style="color:#64748b;">لا توجد بيانات مسجلة في هذا الفولدر.</span>';
+            return;
+        }
+
+        container.innerHTML = records.map((r, index) => `
+            <div class="record-item">
+                <div class="record-header">
+                    <span>📌 ${r.val1}</span>
+                    <small style="color:var(--text-muted); font-weight:normal; font-size:0.75rem;">${r.date}</small>
+                </div>
+                <div style="margin-top: 6px; white-space: pre-wrap; font-size: 0.85rem; color:#cbd5e1;">${r.val2 || 'بدون تفاصيل إضافية'}</div>
+                <div class="record-actions">
+                    <button class="btn-edit" onclick="editRecord(${index})">تعديل</button>
+                    <button class="btn-delete" onclick="deleteRecord(${index})">حذف</button>
+                    <button class="btn-share" onclick="shareSingleRecord(${index})">مشاركة 📤</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function editRecord(index) {
+        let key = getStorageKey();
+        let records = JSON.parse(localStorage.getItem(key) || '[]');
+        let item = records[index];
+
+        document.getElementById('inputField1').value = item.val1;
+        document.getElementById('inputField2').value = item.val2;
+        document.getElementById('editIndex').value = index;
+        document.getElementById('saveBtn').innerText = 'تحديث البيانات';
+    }
+
+    function deleteRecord(index) {
+        if(confirm('هل أنت متأكد من حذف هذا البند؟')) {
+            let key = getStorageKey();
+            let records = JSON.parse(localStorage.getItem(key) || '[]');
+            records.splice(index, 1);
+            localStorage.setItem(key, JSON.stringify(records));
+            loadSavedData();
+            resetForm();
+        }
+    }
+
+    function shareSingleRecord(index) {
+        let key = getStorageKey();
+        let records = JSON.parse(localStorage.getItem(key) || '[]');
+        let r = records[index];
+        let folder = document.getElementById('folderSelect').value;
+
+        let text = `📋 *تقرير من BedaiaConstruct*\n📁 القسم: ${currentModuleKey} ➔ ${folder}\n📌 البند: ${r.val1}\n📝 التفاصيل: ${r.val2 || 'لا توجد'}\n📅 التاريخ: ${r.date}`;
+        openWhatsApp(text);
+    }
+
+    function shareCurrentFolder() {
+        let folder = document.getElementById('folderSelect').value;
+        let key = getStorageKey();
+        let records = JSON.parse(localStorage.getItem(key) || '[]');
+
+        if(records.length === 0) {
+            alert('هذا الفولدر فارغ.');
+            return;
+        }
+
+        let text = `📂 *تقرير فولدر: ${folder}*\n📍 القسم: ${currentModuleKey}\n---------------------------\n`;
+        records.forEach((r, idx) => {
+            text += 
