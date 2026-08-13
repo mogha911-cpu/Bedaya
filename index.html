@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BedaiaConstruct - النسخة الاحترافية</title>
+    <title>BedaiaConstruct - النسخة الحسابية الشاملة</title>
     <style>
         :root {
             --primary: #4f46e5;
-            --primary-light: #6366f1;
             --secondary: #0ea5e9;
             --bg-dark: #0f172a;
             --card-bg: #1e293b;
@@ -30,7 +29,7 @@
         }
 
         .container {
-            max-width: 550px;
+            max-width: 800px;
             margin: auto;
             background: var(--card-bg);
             padding: 20px;
@@ -42,7 +41,7 @@
         h2 {
             text-align: center;
             color: #fff;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             margin-bottom: 20px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
@@ -67,32 +66,53 @@
             background: linear-gradient(90deg, rgba(79, 70, 229, 0.2), transparent);
             color: var(--secondary);
             padding: 10px 14px;
-            margin-top: 18px;
+            margin-top: 22px;
+            margin-bottom: 10px;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: bold;
             border-right: 4px solid var(--secondary);
         }
 
-        ul { list-style: none; padding: 0; margin: 8px 0; }
-        li {
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .folder-btn {
             background: #273548;
-            margin: 6px 0;
-            padding: 12px 14px;
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px;
             border-radius: 10px;
-            font-size: 0.9rem;
+            font-size: 0.82rem;
+            font-weight: 600;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: right;
+            min-height: 65px;
+            width: 100%;
         }
-        li:hover { background: #334155; transform: translateX(-3px); border-color: var(--primary-light); }
-        li span { font-size: 1.1rem; }
+
+        .folder-btn:hover, .folder-btn:active { 
+            background: #334155; 
+            border-color: var(--secondary); 
+            transform: translateY(-2px);
+        }
+
+        .folder-btn span.icon { 
+            font-size: 1.1rem; 
+            background: rgba(15, 23, 42, 0.4);
+            padding: 5px;
+            border-radius: 6px;
+        }
         
         .backup-container {
-            margin-top: 25px;
+            margin-top: 30px;
             padding: 14px;
             background: #0f172a;
             border-radius: 12px;
@@ -103,7 +123,7 @@
         }
         .backup-row { display: flex; gap: 10px; }
         
-        button {
+        .action-btn {
             padding: 10px 14px;
             border: none;
             border-radius: 8px;
@@ -112,7 +132,7 @@
             font-weight: 600;
             transition: opacity 0.2s;
         }
-        button:active { opacity: 0.8; }
+        .action-btn:active { opacity: 0.8; }
         .btn-backup { background: #334155; color: #fff; flex: 1; }
         .btn-share-all { background: var(--accent-green) !important; color: white; width: 100%; }
 
@@ -128,7 +148,7 @@
             align-items: center;
             padding: 12px;
             box-sizing: border-box;
-            z-index: 1000;
+            z-index: 9999;
         }
         .modal-content {
             background: var(--card-bg);
@@ -181,18 +201,22 @@
         .calc-bar button {
             background: var(--primary);
             color: white;
-            padding: 4px 8px;
-            font-size: 0.75rem;
+            padding: 6px 12px;
+            font-size: 0.8rem;
             flex: 1;
-            border-radius: 4px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
         }
+        .calc-bar button:active { opacity: 0.8; }
 
         .btn-container { display: flex; justify-content: space-between; gap: 8px; margin-top: 15px; }
-        .btn-save { background: var(--accent-green); color: white; flex: 1; }
-        .btn-edit { background: var(--accent-yellow); color: #000; flex: 0.4; }
-        .btn-delete { background: var(--accent-red); color: white; flex: 0.4; }
-        .btn-share { background: var(--secondary); color: white; flex: 0.4; }
-        .btn-close { background: #475569; color: white; flex: 1; }
+        .btn-save { background: var(--accent-green); color: white; flex: 1; border: none; border-radius: 8px; padding: 10px; cursor: pointer; font-weight: 600;}
+        .btn-edit { background: var(--accent-yellow); color: #000; flex: 0.4; border: none; border-radius: 6px; padding: 4px; cursor: pointer;}
+        .btn-delete { background: var(--accent-red); color: white; flex: 0.4; border: none; border-radius: 6px; padding: 4px; cursor: pointer;}
+        .btn-share { background: var(--secondary); color: white; border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer;}
+        .btn-close { background: #475569; color: white; flex: 1; border: none; border-radius: 8px; padding: 10px; cursor: pointer; font-weight: 600;}
         
         .output-box {
             margin-top: 15px;
@@ -224,11 +248,6 @@
             gap: 5px;
             flex-wrap: wrap;
         }
-        .record-actions button {
-            padding: 4px 10px;
-            font-size: 0.75rem;
-            flex: none;
-        }
     </style>
 </head>
 <body>
@@ -241,41 +260,67 @@
     </div>
 
     <div class="section-title">1. المشاريع الهندسية والموقع</div>
-    <ul>
-        <li onclick="openModule('إدارة المشاريع', ['مشاريع تحت التنفيذ', 'مشاريع مكتملة', 'الرسومات والمخططات الهندسية', 'المواد المطلوبة للموقع', 'المصاريف التشغيلية للموقع'])">إدارة ومتابعة المشاريع <span>📁</span></li>
-        <li onclick="openModule('دفتر يومية الموقع', ['سجل العمال والمعدات اليومي', 'حالة الطقس وسير العمل'])">دفتر يومية الموقع اليومي <span>📅</span></li>
-        <li onclick="openModule('معالجة المشاكل والطوارئ', ['مشاكل معلقة لم تُحل', 'مشاكل تم علاجها'])">معالجة المشاكل والطوارئ <span>⚠️</span></li>
-    </ul>
+    <div class="grid-menu">
+        <button class="folder-btn" onclick="openModule('إدارة المشاريع', ['مشاريع تحت التنفيذ', 'مشاريع مكتملة', 'الرسومات والمخططات الهندسية', 'المواد المطلوبة للموقع', 'المصاريف التشغيلية للموقع'])">
+            إدارة ومتابعة المشاريع <span class="icon">📁</span>
+        </button>
+        <button class="folder-btn" onclick="openModule('دفتر يومية الموقع', ['سجل العمال والمعدات اليومي', 'حالة الطقس وسير العمل'])">
+            دفتر يومية الموقع اليومي <span class="icon">📅</span>
+        </button>
+        <button class="folder-btn" onclick="openModule('معالجة المشاكل والطوارئ', ['مشاكل معلقة لم تُحل', 'مشاكل تم علاجها'])">
+            معالجة المشاكل والطوارئ <span class="icon">⚠️</span>
+        </button>
+    </div>
 
     <div class="section-title">2. المقاولين الفرعيين والعقود</div>
-    <ul>
-        <li onclick="openModule('المقاولين الفرعيين', ['مقاول حديد (تسليح)', 'مقاول نجارة وتخشيب', 'مقاول طابوك وبناء', 'مقاول بلستر (لياسة)', 'مقاول صحي وكهرباء', 'مقاول تشطيبات عامة'])">مقاولي الباطن والمستخلصات <span>📝</span></li>
-        <li onclick="openModule('عروض الأسعار وجداول الكميات (BOQ)', ['عروض الأسعار المقدمة', 'جداول الكميات المعتمدة (BOQ)'])">عروض الأسعار وجداول الكميات (BOQ) <span>📊</span></li>
-    </ul>
+    <div class="grid-menu">
+        <button class="folder-btn" onclick="openModule('المقاولين الفرعيين', ['مقاول حديد (تسليح)', 'مقاول نجارة وتخشيب', 'مقاول طابوك وبناء', 'مقاول بلستر (لياسة)', 'مقاول صحي وكهرباء', 'مقاول تشطيبات عامة'])">
+            مقاولي الباطن والمستخلصات <span class="icon">📝</span>
+        </button>
+        <button class="folder-btn" onclick="openModule('عروض الأسعار وجداول الكميات (BOQ)', ['عروض الأسعار المقدمة', 'جداول الكميات المعتمدة (BOQ)'])">
+            عروض الأسعار وجداول الكميات <span class="icon">📊</span>
+        </button>
+    </div>
 
     <div class="section-title">3. المشتريات والمخازن واللوجستيات</div>
-    <ul>
-        <li onclick="openModule('الموردين وطلبات الشراء', ['قائمة الموردين', 'طلبات الشراء المعلقة', 'فواتير المشتريات'])">الموردين وطلبات الشراء <span>🛒</span></li>
-        <li onclick="openModule('المستودعات والجرد', ['مستودع الموقع الرئيسي', 'حركات الوارد والصادر', 'جرد المواد'])">المستودعات والجرد <span>📦</span></li>
-        <li onclick="openModule('سيارات نقل العمال والمعدات', ['سجل أساطيل سيارات النقل والباصات', 'حركة تشغيل وتوصيل العمال', 'مصاريف الوقود والصيانة الدورية', 'الرخص والمخالفات المرورية'])">إدارة سيارات النقل واللوجستيات <span>🚚</span></li>
-    </ul>
+    <div class="grid-menu">
+        <button class="folder-btn" onclick="openModule('الموردين وطلبات الشراء', ['قائمة الموردين', 'طلبات الشراء المعلقة', 'فواتير المشتريات'])">
+            الموردين وطلبات الشراء <span class="icon">🛒</span>
+        </button>
+        <button class="folder-btn" onclick="openModule('المستودعات والجرد', ['مستودع الموقع الرئيسي', 'حركات الوارد والصادر', 'جرد المواد'])">
+            المستودعات والجرد <span class="icon">📦</span>
+        </button>
+        <button class="folder-btn" onclick="openModule('سيارات نقل العمال والمعدات', ['سجل أساطيل سيارات النقل والباصات', 'حركة تشغيل وتوصيل العمال', 'مصاريف الوقود والصيانة الدورية', 'الرخص والمخالفات المرورية'])">
+            إدارة سيارات النقل واللوجستيات <span class="icon">🚚</span>
+        </button>
+    </div>
 
     <div class="section-title">4. الشؤون المالية والموارد البشرية</div>
-    <ul>
-        <li onclick="openModule('الخزينة والبنوك', ['الخزينة النقدية اليومية', 'حسابات البنوك', 'المصروفات النثرية'])">الخزينة والبنوك والمصروفات <span>💰</span></li>
-        <li onclick="openModule('حسابات العملاء', ['حسابات العملاء النشطين', 'الأرصدة المستحقة ومستخلصات المالك'])">حسابات العملاء <span>👥</span></li>
-        <li onclick="openModule('سندات القبض والصرف', ['سندات القبض النقدية', 'سندات الصرف'])">سندات القبض والصرف <span>📄</span></li>
-        <li onclick="openModule('سجلات الدوام والرواتب', ['سجل الحضور والدوام اليومي', 'مسيرات الرواتب الشهرية', 'السلف والخصومات'])">سجلات الدوام ومسيرات الرواتب <span>👥</span></li>
-        <li onclick="openModule('حسابات ضريبة القيمة المضافة', ['إقرارات ضريبية', 'فواتير خاضعة للضريبة'])">ضريبة القيمة المضافة (VAT) <span>🧮</span></li>
-    </ul>
+    <div class="grid-menu">
+        <button class="folder-btn" onclick="openModule('الخزينة والبنوك', ['الخزينة النقدية اليومية', 'حسابات البنوك', 'المصروفات النثرية'])">
+            الخزينة والبنوك والمصروفات <span class="icon">💰</span>
+        </button>
+        <button class="folder-btn" onclick="openModule('حسابات العملاء', ['حسابات العملاء النشطين', 'الأرصدة المستحقة ومستخلصات المالك'])">
+            حسابات العملاء <span class="icon">👥</span>
+        </button>
+        <button class="folder-btn" onclick="openModule('سندات القبض والصرف', ['سندات القبض النقدية', 'سندات الصرف'])">
+            سندات القبض والصرف <span class="icon">📄</span>
+        </button>
+        <button class="folder-btn" onclick="openModule('سجلات الدوام والرواتب', ['سجل الحضور والدوام اليومي', 'مسيرات الرواتب الشهرية', 'السلف والخصومات'])">
+            سجلات الدوام ومسيرات الرواتب <span class="icon">👥</span>
+        </button>
+        <button class="folder-btn" onclick="openModule('حسابات ضريبة القيمة المضافة', ['إقرارات ضريبية', 'فواتير خاضعة للضريبة'])">
+            ضريبة القيمة المضافة (VAT) <span class="icon">🧮</span>
+        </button>
+    </div>
 
     <div class="backup-container">
         <div class="backup-row">
-            <button class="btn-backup" onclick="exportBackup()">📥 تصدير ملف</button>
-            <button class="btn-backup" onclick="document.getElementById('importFile').click()">📤 استعادة</button>
+            <button class="action-btn btn-backup" onclick="exportBackup()">📥 تصدير ملف</button>
+            <button class="action-btn btn-backup" onclick="document.getElementById('importFile').click()">📤 استعادة</button>
             <input type="file" id="importFile" style="display:none" onchange="importBackup(event)">
         </div>
-        <button class="btn-share-all" onclick="shareAllDataWhatsApp()">📢 مشاركة كافة البيانات (واتساب)</button>
+        <button class="action-btn btn-share-all" onclick="shareAllDataWhatsApp()">📢 مشاركة كافة البيانات (واتساب)</button>
     </div>
 </div>
 
@@ -283,12 +328,12 @@
     <div class="modal-content">
         <h3>
             <span id="modalTitle">عنوان القسم</span>
-            <button class="btn-share" style="padding:4px 10px; font-size:0.75rem;" onclick="shareCurrentFolder()">مشاركة الفولدر 📤</button>
+            <button class="btn-share" onclick="shareCurrentFolder()">مشاركة الفولدر 📤</button>
         </h3>
         
         <div class="form-group" style="margin-top: 12px;">
             <label>اختر التصنيف أو الفولدر الفرعي:</label>
-            <select id="folderSelect" onclick="loadSavedData()" onchange="loadSavedData()"></select>
+            <select id="folderSelect" onchange="loadSavedData()"></select>
         </div>
 
         <div class="form-group">
@@ -299,9 +344,9 @@
         <div class="form-group">
             <label id="labelField2">التفاصيل أو المبالغ (مثل: 1500 + 300):</label>
             <div class="calc-bar">
-                <button type="button" onclick="calculateExpression()">🧮 احسب التلقائي الآن</button>
+                <button type="button" onclick="calculateExpression()">🧮 احسب وإضافة النتيجة تلقائياً</button>
             </div>
-            <textarea id="inputField2" rows="3" placeholder="اكتب المبالغ أو التفاصيل هنا..."></textarea>
+            <textarea id="inputField2" rows="3" placeholder="اكتب الأرقام أو العمليات الحسابية هنا واضغط زر الحاسبة..."></textarea>
         </div>
         
         <input type="hidden" id="editIndex" value="-1">
@@ -360,16 +405,23 @@
     function calculateExpression() {
         let text = document.getElementById('inputField2').value;
         if (!text.trim()) {
-            alert('يرجى كتابة أرقام أو عملية حسابية أولاً.');
+            alert('يرجى كتابة أرقام أو عملية حسابية في مربع التفاصيل أولاً.');
             return;
         }
         try {
-            let sanitized = text.replace(/[^\d+\-*/().]/g, '');
+            // استخراج الأرقام والعمليات الحسابية بأمان وتطبيقها
+            let sanitized = text.replace(/[^\d+\-*/().\n]/g, '').replace(/\n/g, '+');
             if(sanitized) {
+                // إزالة علامات الزائد الزائدة إذا وجدت
+                sanitized = sanitized.replace(/\+{2,}/g, '+');
                 let result = Function('return ' + sanitized)();
-                document.getElementById('inputField2').value = text + '\n💡 [النتيجة: ' + result + ']';
+                if (result !== undefined && !isNaN(result)) {
+                    document.getElementById('inputField2').value = text + '\n💡 [الإجمالي المفقود / الناتج: ' + result + ']';
+                } else {
+                    alert('تعذر حساب النتيجة، تأكد من صحة الأرقام.');
+                }
             } else {
-                alert('لم يتم العثور على أرقام صحيحة للحساب.');
+                alert('لم يتم العثور على أرقام صالحة للحساب.');
             }
         } catch(e) {
             alert('خطأ في صيغة العملية الحسابية.');
@@ -385,16 +437,6 @@
             alert('يرجى إدخال الحقل الأساسي على الأقل');
             return;
         }
-
-        try {
-            if(/[+\-*/]/.test(val2) && !val2.includes('النتيجة')) {
-                let sanitized = val2.replace(/[^\d+\-*/().\n]/g, '');
-                let result = Function('return ' + sanitized)();
-                if(result !== undefined && !isNaN(result)) {
-                    val2 += '\n💡 [المجموع: ' + result + ']';
-                }
-            }
-        } catch(e) {}
 
         let key = getStorageKey();
         let records = JSON.parse(localStorage.getItem(key) || '[]');
@@ -463,38 +505,3 @@
     function shareSingleRecord(index) {
         let key = getStorageKey();
         let records = JSON.parse(localStorage.getItem(key) || '[]');
-        let r = records[index];
-        let folder = document.getElementById('folderSelect').value;
-        let text = `📋 *تقرير من BedaiaConstruct*\n📁 القسم: ${currentModuleKey} ➔ ${folder}\n📌 البند: ${r.val1}\n📝 التفاصيل: ${r.val2 || 'لا توجد'}\n📅 التاريخ: ${r.date}`;
-        openWhatsApp(text);
-    }
-
-    function shareCurrentFolder() {
-        let folder = document.getElementById('folderSelect').value;
-        let key = getStorageKey();
-        let records = JSON.parse(localStorage.getItem(key) || '[]');
-        if(records.length === 0) { alert('الفولدر فارغ.'); return; }
-        let text = `📂 *تقرير فولدر: ${folder}*\n📍 القسم: ${currentModuleKey}\n---------------------------\n`;
-        records.forEach((r, idx) => {
-            text += `${idx+1}. *${r.val1}*\n   التفاصيل: ${r.val2 || 'بدون'}\n   (${r.date})\n\n`;
-        });
-        openWhatsApp(text);
-    }
-
-    function shareAllDataWhatsApp() {
-        let text = `📊 *ملخص شامل لبيانات BedaiaConstruct*\n===========================\n`;
-        let hasData = false;
-        for(let i=0; i<localStorage.length; i++) {
-            let key = localStorage.key(i);
-            if(key.startsWith('erp_')) {
-                let records = JSON.parse(localStorage.getItem(key) || '[]');
-                if(records.length > 0) {
-                    hasData = true;
-                    let cleanKey = key.replace('erp_', '').replace(/_/g, ' ➔ ');
-                    text += `\n📁 *[ ${cleanKey} ]*\n`;
-                    records.forEach(r => { text += `  • ${r.val1} : ${r.val2 || ''} (${r.date})\n`; });
-                }
-            }
-        }
-        if(!hasData) { alert('لا توجد بيانات.'); return; }
-        openWhatsA
