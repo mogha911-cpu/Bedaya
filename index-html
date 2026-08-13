@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" translate="no">
 <head>
     <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BedaiaConstruct - الحسابات التلقائية الذكية</title>
+    <title>BedaiaConstruct - النسخة الاحترافية</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -168,7 +169,6 @@
             border-color: var(--primary);
         }
 
-        /* Calculator Helper Box */
         .calc-bar {
             display: flex;
             gap: 5px;
@@ -236,7 +236,6 @@
 <div class="container">
     <h2>🏗️ BedaiaConstruct</h2>
 
-    <!-- محرك البحث العام -->
     <div class="search-box">
         <input type="text" id="globalSearch" placeholder="🔍 بحث شامل في كل الأقسام..." onkeyup="globalSearchFunction()">
     </div>
@@ -270,7 +269,6 @@
         <li onclick="openModule('حسابات ضريبة القيمة المضافة', ['إقرارات ضريبية', 'فواتير خاضعة للضريبة'])">ضريبة القيمة المضافة (VAT) <span>🧮</span></li>
     </ul>
 
-    <!-- أزرار النسخ الاحتياطي والمشاركة -->
     <div class="backup-container">
         <div class="backup-row">
             <button class="btn-backup" onclick="exportBackup()">📥 تصدير ملف</button>
@@ -281,7 +279,6 @@
     </div>
 </div>
 
-<!-- نافذة إدارة القسم والفولدرات الفرعية -->
 <div class="modal" id="dataModal">
     <div class="modal-content">
         <h3>
@@ -300,11 +297,11 @@
         </div>
         
         <div class="form-group">
-            <label id="labelField2">التفاصيل أو المبالغ (يمكنك كتابة عمليات مثل: 1500 + 300):</label>
+            <label id="labelField2">التفاصيل أو المبالغ (مثل: 1500 + 300):</label>
             <div class="calc-bar">
                 <button type="button" onclick="calculateExpression()">🧮 احسب التلقائي الآن</button>
             </div>
-            <textarea id="inputField2" rows="3" placeholder="اكتب المبالغ أو التفاصيل هنا... (سيتم الحساب تلقائياً عند الحفظ)"></textarea>
+            <textarea id="inputField2" rows="3" placeholder="اكتب المبالغ أو التفاصيل هنا..."></textarea>
         </div>
         
         <input type="hidden" id="editIndex" value="-1">
@@ -321,7 +318,6 @@
     </div>
 </div>
 
-<!-- نافذة نتائج البحث العام -->
 <div class="modal" id="searchModal">
     <div class="modal-content">
         <h3>نتائج البحث الشامل</h3>
@@ -338,10 +334,8 @@
     function openModule(title, subFolders) {
         currentModuleKey = title;
         document.getElementById('modalTitle').innerText = title;
-        
         let select = document.getElementById('folderSelect');
         select.innerHTML = subFolders.map(f => `<option value="${f}">${f}</option>`).join('');
-        
         resetForm();
         document.getElementById('dataModal').style.display = 'flex';
         loadSavedData();
@@ -363,24 +357,22 @@
         return 'erp_' + currentModuleKey + '_' + folder;
     }
 
-    // محرك الحسابات الآلي (يعالج أي معادلة أو أرقام من النص)
     function calculateExpression() {
         let text = document.getElementById('inputField2').value;
         if (!text.trim()) {
-            alert('يرجى كتابة أرقام أو عملية حسابية في خانة التفاصيل أولاً.');
+            alert('يرجى كتابة أرقام أو عملية حسابية أولاً.');
             return;
         }
         try {
-            // تنظيف النص والسماح فقط بالأرقام والعمليات الرياضية الحسابية الآمنة
             let sanitized = text.replace(/[^\d+\-*/().]/g, '');
             if(sanitized) {
                 let result = Function('return ' + sanitized)();
-                document.getElementById('inputField2').value = text + '\n💡 [النتيجة الحسابية المحسوبة تلقائياً: ' + result + ']';
+                document.getElementById('inputField2').value = text + '\n💡 [النتيجة: ' + result + ']';
             } else {
                 alert('لم يتم العثور على أرقام صحيحة للحساب.');
             }
         } catch(e) {
-            alert('خطأ في صيغة العملية الحسابية، تأكد من كتابة الأرقام بشكل صحيح.');
+            alert('خطأ في صيغة العملية الحسابية.');
         }
     }
 
@@ -394,22 +386,15 @@
             return;
         }
 
-        // محاولة استخراج وحساب العمليات الحسابية تلقائياً عند الضغط على حفظ إذا وُجدت أرقام وعلامات جمع وطرح
         try {
-            let lines = val2.split('\n');
-            let lastLine = lines[lines.length - 1];
-            // إذا كان النص يحتوي على عمليات رياضية ولم يتم حسابها بعد
-            if(/[+\-*/]/.test(val2) && !val2.includes('النتيجة الحسابية')) {
+            if(/[+\-*/]/.test(val2) && !val2.includes('النتيجة')) {
                 let sanitized = val2.replace(/[^\d+\-*/().\n]/g, '');
-                // حساب السطر الأخير أو المجموع البسيط
                 let result = Function('return ' + sanitized)();
                 if(result !== undefined && !isNaN(result)) {
-                    val2 += '\n💡 [المجموع التلقائي: ' + result + ']';
+                    val2 += '\n💡 [المجموع: ' + result + ']';
                 }
             }
-        } catch(e) {
-            // إذا فشل الحساب الآلي يحفظ النص كما هو دون إزعاج المستخدم
-        }
+        } catch(e) {}
 
         let key = getStorageKey();
         let records = JSON.parse(localStorage.getItem(key) || '[]');
@@ -423,7 +408,7 @@
         }
 
         localStorage.setItem(key, JSON.stringify(records));
-        alert('تم الحساب والحفظ بنجاح!');
+        alert('تم الحفظ بنجاح!');
         resetForm();
         loadSavedData();
     }
@@ -434,7 +419,7 @@
         let container = document.getElementById('savedItems');
         
         if(records.length === 0) {
-            container.innerHTML = '<span style="color:#64748b;">لا توجد بيانات مسجلة في هذا الفولدر.</span>';
+            container.innerHTML = '<span style="color:#64748b;">لا توجد بيانات مسجلة.</span>';
             return;
         }
 
@@ -444,7 +429,7 @@
                     <span>📌 ${r.val1}</span>
                     <small style="color:var(--text-muted); font-weight:normal; font-size:0.75rem;">${r.date}</small>
                 </div>
-                <div style="margin-top: 6px; white-space: pre-wrap; font-size: 0.85rem; color:#cbd5e1;">${r.val2 || 'بدون تفاصيل إضافية'}</div>
+                <div style="margin-top: 6px; white-space: pre-wrap; font-size: 0.85rem; color:#cbd5e1;">${r.val2 || 'بدون تفاصيل'}</div>
                 <div class="record-actions">
                     <button class="btn-edit" onclick="editRecord(${index})">تعديل</button>
                     <button class="btn-delete" onclick="deleteRecord(${index})">حذف</button>
@@ -458,7 +443,6 @@
         let key = getStorageKey();
         let records = JSON.parse(localStorage.getItem(key) || '[]');
         let item = records[index];
-
         document.getElementById('inputField1').value = item.val1;
         document.getElementById('inputField2').value = item.val2;
         document.getElementById('editIndex').value = index;
@@ -466,7 +450,7 @@
     }
 
     function deleteRecord(index) {
-        if(confirm('هل أنت متأكد من حذف هذا البند؟')) {
+        if(confirm('هل أنت متأكد من الحذف؟')) {
             let key = getStorageKey();
             let records = JSON.parse(localStorage.getItem(key) || '[]');
             records.splice(index, 1);
@@ -481,7 +465,6 @@
         let records = JSON.parse(localStorage.getItem(key) || '[]');
         let r = records[index];
         let folder = document.getElementById('folderSelect').value;
-
         let text = `📋 *تقرير من BedaiaConstruct*\n📁 القسم: ${currentModuleKey} ➔ ${folder}\n📌 البند: ${r.val1}\n📝 التفاصيل: ${r.val2 || 'لا توجد'}\n📅 التاريخ: ${r.date}`;
         openWhatsApp(text);
     }
@@ -490,12 +473,28 @@
         let folder = document.getElementById('folderSelect').value;
         let key = getStorageKey();
         let records = JSON.parse(localStorage.getItem(key) || '[]');
-
-        if(records.length === 0) {
-            alert('هذا الفولدر فارغ.');
-            return;
-        }
-
+        if(records.length === 0) { alert('الفولدر فارغ.'); return; }
         let text = `📂 *تقرير فولدر: ${folder}*\n📍 القسم: ${currentModuleKey}\n---------------------------\n`;
         records.forEach((r, idx) => {
-            text += 
+            text += `${idx+1}. *${r.val1}*\n   التفاصيل: ${r.val2 || 'بدون'}\n   (${r.date})\n\n`;
+        });
+        openWhatsApp(text);
+    }
+
+    function shareAllDataWhatsApp() {
+        let text = `📊 *ملخص شامل لبيانات BedaiaConstruct*\n===========================\n`;
+        let hasData = false;
+        for(let i=0; i<localStorage.length; i++) {
+            let key = localStorage.key(i);
+            if(key.startsWith('erp_')) {
+                let records = JSON.parse(localStorage.getItem(key) || '[]');
+                if(records.length > 0) {
+                    hasData = true;
+                    let cleanKey = key.replace('erp_', '').replace(/_/g, ' ➔ ');
+                    text += `\n📁 *[ ${cleanKey} ]*\n`;
+                    records.forEach(r => { text += `  • ${r.val1} : ${r.val2 || ''} (${r.date})\n`; });
+                }
+            }
+        }
+        if(!hasData) { alert('لا توجد بيانات.'); return; }
+        openWhatsA
