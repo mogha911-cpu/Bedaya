@@ -32,6 +32,8 @@
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: bold; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem; }
+        .amount-row { display: flex; gap: 8px; }
+        .amount-row .form-group { flex: 1; margin-bottom: 0; }
         .btn-container { display: flex; justify-content: space-between; gap: 8px; margin-top: 15px; }
         button { padding: 8px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; flex: 1; }
         .btn-save { background: #27ae60; color: white; }
@@ -41,10 +43,40 @@
         .btn-close { background: #7f8c8d; color: white; }
         
         .output-box { margin-top: 15px; background: #eaf2f8; padding: 10px; border-radius: 4px; font-size: 0.85rem; }
-        .record-item { background: #fff; padding: 8px; margin-bottom: 6px; border-radius: 4px; border: 1px solid #dcdde1; }
-        .record-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+
+        /* بطاقة الشخص/السيارة (المجموعة) */
+        .entity-card { background: #fff; margin-bottom: 10px; border-radius: 6px; border: 1px solid #dcdde1; overflow: hidden; }
+        .entity-header { background: #f1f3f5; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; }
+        .entity-name { font-weight: bold; color: #2c3e50; }
+        .entity-balance { font-weight: bold; font-size: 0.9rem; padding: 3px 8px; border-radius: 12px; }
+        .balance-positive { background: #d4efdf; color: #196f3d; }
+        .balance-negative { background: #fadbd8; color: #922b21; }
+        .balance-zero { background: #eaecee; color: #616a6b; }
+
+        .record-item { background: #fff; padding: 8px 10px; border-top: 1px solid #eee; font-size: 0.85rem; }
+        .record-header { display: flex; justify-content: space-between; align-items: center; }
+        .tx-type { font-weight: bold; padding: 1px 6px; border-radius: 3px; font-size: 0.75rem; }
+        .tx-credit { background: #d4efdf; color: #196f3d; }
+        .tx-debit { background: #fadbd8; color: #922b21; }
         .record-actions { margin-top: 5px; display: flex; justify-content: flex-end; gap: 4px; flex-wrap: wrap; }
         .record-actions button { padding: 3px 6px; font-size: 0.75rem; flex: none; }
+
+        .folder-total-box {
+            margin-top: 12px; padding: 10px; background: #2c3e50; color: #fff;
+            border-radius: 6px; text-align: center; font-weight: bold; font-size: 0.95rem;
+        }
+
+        /* بانر تنبيه وضع التعديل */
+        .edit-mode-banner {
+            display: none;
+            background: #fff3cd; color: #856404; border: 2px solid #f39c12;
+            padding: 8px 10px; border-radius: 6px; margin-bottom: 12px;
+            font-size: 0.85rem; font-weight: bold; text-align: center;
+        }
+        .edit-mode-banner.show { display: block; }
+        .modal-content.editing { border: 3px solid #f39c12; }
+        .btn-cancel-edit { background: #f39c12; color: #fff; display: none; }
+        .btn-cancel-edit.show { display: block; }
     </style>
 </head>
 <body>
@@ -107,22 +139,40 @@
         
         <div class="form-group" style="margin-top: 10px;">
             <label>اختر التصنيف أو الفولدر الفرعي:</label>
-            <select id="folderSelect" onchange="loadSavedData()"></select>
+            <select id="folderSelect" onchange="resetForm(); loadSavedData();"></select>
         </div>
 
+        <div class="edit-mode-banner" id="editModeBanner">🖊️ أنت الآن بتعدل حركة موجودة بالفعل - مش بتضيف حركة جديدة. لو عايز تضيف حركة جديدة، دوس "إلغاء التعديل" الأول.</div>
+
         <div class="form-group">
-            <label id="labelField1">اسم البند / المشروع / المقاول / السيارة:</label>
-            <input type="text" id="inputField1" placeholder="اكتب هنا...">
+            <label id="labelField1">اسم العامل / المقاول / السيارة / البند:</label>
+            <input type="text" id="inputField1" placeholder="اكتب الاسم هنا... (نفس الاسم تتجمع حركاته مع بعض)">
         </div>
-        <div class="form-group">
-            <label id="labelField2">التفاصيل / المبالغ / الملاحظات أو طريقة المعالجة:</label>
-            <textarea id="inputField2" rows="3" placeholder="اكتب التفاصيل الكاملة..."></textarea>
+
+        <div class="amount-row">
+            <div class="form-group">
+                <label>نوع الحركة:</label>
+                <select id="txType">
+                    <option value="credit">➕ له (مستحقات / أجر / إيراد)</option>
+                    <option value="debit">➖ عليه (سلفة / مصروف / خصم)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>المبلغ:</label>
+                <input type="number" id="txAmount" placeholder="0" step="any">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 12px;">
+            <label id="labelField2">ملاحظات (اختياري):</label>
+            <textarea id="inputField2" rows="2" placeholder="مثال: يوم عمل الأحد، أو بترول عربية النقل..."></textarea>
         </div>
         
         <input type="hidden" id="editIndex" value="-1">
 
         <div class="btn-container">
-            <button class="btn-save" id="saveBtn" onclick="saveData()">حفظ كجديد</button>
+            <button class="btn-save" id="saveBtn" onclick="saveData()">حفظ الحركة</button>
+            <button class="btn-cancel-edit" id="cancelEditBtn" onclick="resetForm()">إلغاء التعديل ➕ حركة جديدة</button>
             <button class="btn-close" onclick="closeForm()">إغلاق</button>
         </div>
 
@@ -161,13 +211,19 @@
 
     function closeForm() {
         document.getElementById('dataModal').style.display = 'none';
+        resetForm();
     }
 
     function resetForm() {
         document.getElementById('inputField1').value = '';
         document.getElementById('inputField2').value = '';
+        document.getElementById('txType').value = 'credit';
+        document.getElementById('txAmount').value = '';
         document.getElementById('editIndex').value = '-1';
-        document.getElementById('saveBtn').innerText = 'حفظ كجديد';
+        document.getElementById('saveBtn').innerText = 'حفظ الحركة';
+        document.getElementById('editModeBanner').classList.remove('show');
+        document.getElementById('cancelEditBtn').classList.remove('show');
+        document.querySelector('.modal-content').classList.remove('editing');
     }
 
     function getStorageKey() {
@@ -175,13 +231,28 @@
         return 'erp_' + currentModuleKey + '_' + folder;
     }
 
+    function formatNumber(num) {
+        return Number(num.toFixed(2)).toLocaleString('ar-EG');
+    }
+
+    /* ============================
+       كل حركة بتتسجل كصف مستقل (اسم + نوع له/عليه + مبلغ + ملاحظة + تاريخ)
+       وبعدين بيتم تجميع الحركات حسب الاسم تلقائيًا وحساب الرصيد الصافي
+       ============================ */
     function saveData() {
-        const val1 = document.getElementById('inputField1').value;
-        const val2 = document.getElementById('inputField2').value;
+        const name = document.getElementById('inputField1').value.trim();
+        const note = document.getElementById('inputField2').value;
+        const type = document.getElementById('txType').value;
+        const amountRaw = document.getElementById('txAmount').value;
+        const amount = parseFloat(amountRaw);
         let editIdx = parseInt(document.getElementById('editIndex').value);
 
-        if(!val1) {
-            alert('يرجى إدخال الحقل الأساسي على الأقل');
+        if(!name) {
+            alert('يرجى إدخال الاسم (العامل / السيارة / البند)');
+            return;
+        }
+        if(amountRaw === '' || isNaN(amount)) {
+            alert('يرجى إدخال المبلغ بالأرقام');
             return;
         }
 
@@ -189,17 +260,40 @@
         let records = JSON.parse(localStorage.getItem(key) || '[]');
 
         if(editIdx === -1) {
-            records.push({val1, val2, date: new Date().toLocaleDateString('ar-EG')});
+            records.push({ name, type, amount, note, date: new Date().toLocaleDateString('ar-EG') });
         } else {
-            records[editIdx].val1 = val1;
-            records[editIdx].val2 = val2;
+            let old = records[editIdx];
+            let confirmMsg = `أنت بصدد استبدال الحركة القديمة (${old.type === 'credit' ? 'له' : 'عليه'} ${formatNumber(old.amount)}) بالبيانات الجديدة (${type === 'credit' ? 'له' : 'عليه'} ${formatNumber(amount)}).\n\nلو قصدك تضيف حركة جديدة بدل ما تعدل القديمة، دوس "إلغاء" وبعدين "إلغاء التعديل" في الفورم.\n\nهل تريد الاستمرار في الاستبدال؟`;
+            if(!confirm(confirmMsg)) {
+                return;
+            }
+            records[editIdx].name = name;
+            records[editIdx].type = type;
+            records[editIdx].amount = amount;
+            records[editIdx].note = note;
             records[editIdx].date = new Date().toLocaleDateString('ar-EG') + ' (معدل)';
         }
 
         localStorage.setItem(key, JSON.stringify(records));
-        alert('تم الحفظ بنجاح!');
         resetForm();
         loadSavedData();
+    }
+
+    // تجميع الحركات حسب الاسم وحساب الرصيد لكل واحد
+    function groupRecords(records) {
+        let groups = {};
+        records.forEach((r, idx) => {
+            if(!groups[r.name]) groups[r.name] = { transactions: [], balance: 0 };
+            groups[r.name].transactions.push({ ...r, idx });
+            groups[r.name].balance += (r.type === 'credit' ? r.amount : -r.amount);
+        });
+        return groups;
+    }
+
+    function balanceClass(balance) {
+        if(balance > 0) return 'balance-positive';
+        if(balance < 0) return 'balance-negative';
+        return 'balance-zero';
     }
 
     function loadSavedData() {
@@ -212,20 +306,41 @@
             return;
         }
 
-        container.innerHTML = records.map((r, index) => `
-            <div class="record-item">
-                <div class="record-header">
-                    <span>📌 ${r.val1}</span>
-                    <small style="color:#888; font-weight:normal;">${r.date}</small>
+        let groups = groupRecords(records);
+        let grandTotal = 0;
+
+        let html = Object.keys(groups).map(name => {
+            let g = groups[name];
+            grandTotal += g.balance;
+            let txHtml = g.transactions.map(t => `
+                <div class="record-item">
+                    <div class="record-header">
+                        <span><span class="tx-type ${t.type === 'credit' ? 'tx-credit' : 'tx-debit'}">${t.type === 'credit' ? 'له' : 'عليه'}</span> ${formatNumber(t.amount)}</span>
+                        <small style="color:#888;">${t.date}</small>
+                    </div>
+                    ${t.note ? `<div style="margin-top:3px; color:#555; font-size:0.8rem;">${t.note}</div>` : ''}
+                    <div class="record-actions">
+                        <button class="btn-edit" onclick="editRecord(${t.idx})">تعديل</button>
+                        <button class="btn-delete" onclick="deleteRecord(${t.idx})">حذف</button>
+                        <button class="btn-share" onclick="shareSingleRecord(${t.idx})">مشاركة 📤</button>
+                    </div>
                 </div>
-                <div style="margin-top: 4px; white-space: pre-wrap; font-size: 0.85rem; color:#555;">${r.val2 || 'بدون تفاصيل إضافية'}</div>
-                <div class="record-actions">
-                    <button class="btn-edit" onclick="editRecord(${index})">تعديل</button>
-                    <button class="btn-delete" onclick="deleteRecord(${index})">حذف</button>
-                    <button class="btn-share" onclick="shareSingleRecord(${index})">مشاركة 📤</button>
+            `).join('');
+
+            return `
+                <div class="entity-card">
+                    <div class="entity-header">
+                        <span class="entity-name">👤 ${name}</span>
+                        <span class="entity-balance ${balanceClass(g.balance)}">الرصيد: ${formatNumber(g.balance)}</span>
+                    </div>
+                    ${txHtml}
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
+
+        html += `<div class="folder-total-box">💰 إجمالي رصيد الفولدر: ${formatNumber(grandTotal)}</div>`;
+
+        container.innerHTML = html;
     }
 
     function editRecord(index) {
@@ -233,14 +348,20 @@
         let records = JSON.parse(localStorage.getItem(key) || '[]');
         let item = records[index];
 
-        document.getElementById('inputField1').value = item.val1;
-        document.getElementById('inputField2').value = item.val2;
+        document.getElementById('inputField1').value = item.name;
+        document.getElementById('inputField2').value = item.note || '';
+        document.getElementById('txType').value = item.type;
+        document.getElementById('txAmount').value = item.amount;
         document.getElementById('editIndex').value = index;
-        document.getElementById('saveBtn').innerText = 'تحديث البيانات';
+        document.getElementById('saveBtn').innerText = 'تحديث الحركة';
+        document.getElementById('editModeBanner').classList.add('show');
+        document.getElementById('cancelEditBtn').classList.add('show');
+        document.querySelector('.modal-content').classList.add('editing');
+        document.getElementById('inputField1').scrollIntoView({behavior:'smooth', block:'center'});
     }
 
     function deleteRecord(index) {
-        if(confirm('هل أنت متأكد من حذف هذا البند؟')) {
+        if(confirm('هل أنت متأكد من حذف هذه الحركة؟')) {
             let key = getStorageKey();
             let records = JSON.parse(localStorage.getItem(key) || '[]');
             records.splice(index, 1);
@@ -250,7 +371,7 @@
         }
     }
 
-    // 1. مشاركة بند واحد (جزء)
+    // 1. مشاركة حركة واحدة
     function shareSingleRecord(index) {
         let key = getStorageKey();
         let records = JSON.parse(localStorage.getItem(key) || '[]');
@@ -258,157 +379,4 @@
         let folder = document.getElementById('folderSelect').value;
 
         let text = `📋 *تقرير من BedaiaERP*\n` +
-                   `📁 القسم: ${currentModuleKey} ➔ ${folder}\n` +
-                   `📌 البند: ${r.val1}\n` +
-                   `📝 التفاصيل: ${r.val2 || 'لا توجد'}\n` +
-                   `📅 التاريخ: ${r.date}`;
-
-        openWhatsApp(text);
-    }
-
-    // 2. مشاركة فولدر كامل
-    function shareCurrentFolder() {
-        let folder = document.getElementById('folderSelect').value;
-        let key = getStorageKey();
-        let records = JSON.parse(localStorage.getItem(key) || '[]');
-
-        if(records.length === 0) {
-            alert('هذا الفولدر فارغ ولا توجد بيانات لمشاركتها.');
-            return;
-        }
-
-        let text = `📂 *تقرير فولدر: ${folder}*\n` +
-                   `📍 القسم الرئيسي: ${currentModuleKey}\n` +
-                   `---------------------------\n`;
-
-        records.forEach((r, idx) => {
-            text += `${idx+1}. *${r.val1}*\n   التفاصيل: ${r.val2 || 'بدون'}\n   (${r.date})\n\n`;
-        });
-
-        openWhatsApp(text);
-    }
-
-    // 3. مشاركة كل بيانات النظام (الكل)
-    function shareAllDataWhatsApp() {
-        let text = `📊 *ملخص شامل لبيانات BedaiaERP*\n===========================\n`;
-        let hasData = false;
-
-        for(let i=0; i<localStorage.length; i++) {
-            let key = localStorage.key(i);
-            if(key.startsWith('erp_')) {
-                let records = JSON.parse(localStorage.getItem(key) || '[]');
-                if(records.length > 0) {
-                    hasData = true;
-                    let cleanKey = key.replace('erp_', '').replace(/_/g, ' ➔ ');
-                    text += `\n📁 *[ ${cleanKey} ]*\n`;
-                    records.forEach(r => {
-                        text += `  • ${r.val1} : ${r.val2 || ''} (${r.date})\n`;
-                    });
-                }
-            }
-        }
-
-        if(!hasData) {
-            alert('لا توجد أي بيانات مسجلة في النظام لمشاركتها.');
-            return;
-        }
-
-        openWhatsApp(text);
-    }
-
-    function openWhatsApp(text) {
-        let encoded = encodeURIComponent(text);
-        window.open('https://api.whatsapp.com/send?text=' + encoded, '_blank');
-    }
-
-    // محرك البحث العام
-    function globalSearchFunction() {
-        let query = document.getElementById('globalSearch').value.trim().toLowerCase();
-        let resultsContainer = document.getElementById('searchResults');
-        
-        if(query.length < 2) {
-            document.getElementById('searchModal').style.display = 'none';
-            return;
-        }
-
-        let results = [];
-        for(let i=0; i<localStorage.length; i++) {
-            let key = localStorage.key(i);
-            if(key.startsWith('erp_')) {
-                let records = JSON.parse(localStorage.getItem(key) || '[]');
-                let parts = key.split('_');
-                let moduleName = parts[1] || '';
-                let folderName = parts[2] || '';
-
-                records.forEach((r, idx) => {
-                    if((r.val1 && r.val1.toLowerCase().includes(query)) || (r.val2 && r.val2.toLowerCase().includes(query))) {
-                        results.push({
-                            module: moduleName,
-                            folder: folderName,
-                            val1: r.val1,
-                            val2: r.val2,
-                            date: r.date
-                        });
-                    }
-                });
-            }
-        }
-
-        if(results.length === 0) {
-            resultsContainer.innerHTML = '<p style="color:#7f8c8d; text-align:center;">لا توجد نتائج مطابقة لبحثك.</p>';
-        } else {
-            resultsContainer.innerHTML = results.map(res => `
-                <div class="record-item" style="border-right: 4px solid #3498db;">
-                    <small style="color:#2980b9; font-weight:bold;">📁 ${res.module} ➔ ${res.folder}</small>
-                    <div style="font-weight:bold; margin-top:2px;">📌 ${res.val1}</div>
-                    <div style="font-size:0.85rem; color:#555;">${res.val2}</div>
-                    <small style="color:#888;">(${res.date})</small>
-                </div>
-            `).join('');
-        }
-
-        document.getElementById('searchModal').style.display = 'flex';
-    }
-
-    function exportBackup() {
-        let backupData = {};
-        for(let i=0; i<localStorage.length; i++) {
-            let key = localStorage.key(i);
-            if(key.startsWith('erp_')) {
-                backupData[key] = localStorage.getItem(key);
-            }
-        }
-        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData));
-        let downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", "BedaiaERP_Backup_" + new Date().toISOString().slice(0,10) + ".json");
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
-    }
-
-    function importBackup(event) {
-        let file = event.target.files[0];
-        if(!file) return;
-        let reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                let backupData = JSON.parse(e.target.result);
-                for(let key in backupData) {
-                    if(key.startsWith('erp_')) {
-                        localStorage.setItem(key, backupData[key]);
-                    }
-                }
-                alert('تم استعادة النسخة الاحتياطية بنجاح!');
-                location.reload();
-            } catch(err) {
-                alert('ملف النسخة الاحتياطية غير صالح!');
-            }
-        };
-        reader.readAsText(file);
-    }
-</script>
-
-</body>
-</html>
-الكود ده شغال اظبطه انه هو يقوم بالعمليات الحسابيه
+                   `📁 القسم: ${curre
