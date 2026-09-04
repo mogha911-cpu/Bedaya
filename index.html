@@ -143,7 +143,8 @@
         <div class="highlight-red">
             <strong>تفصيل الرصيد المتبقي:</strong><br>
             يساوي <b><span id="finalSacksDetail">0</span></b> شيكارة كاملة<br>
-            ويتبقى <b><span id="finalRagheefDetail">0</span></b> رغيف (عشان تقفل شيكارة كمان).
+            ويتبقى <b><span id="finalRagheefDetail">0</span></b> رغيف كسور<br>
+            (تحتاج إلى <b><span id="neededForSack">0</span></b> رغيف إضافي لتقفيل شيكارة كمان).
         </div>
     </div>
 
@@ -177,7 +178,9 @@
 
         let finalSacks = Math.floor(Math.abs(final) / 725);
         let finalLeftover = Math.abs(final) % 725;
-        let neededForNextSack = final > 0 ? (725 - (final % 725)) % 725 : 0;
+        
+        // المعادلة الدقيقة للرغفان المطلوبة لتقفيل الشيكارة التالية (725 - الباقي)
+        let needed = finalLeftover === 0 ? 0 : (725 - finalLeftover);
 
         document.getElementById('salesSacks').innerText = salesSacks;
         document.getElementById('salesLeftover').innerText = salesLeftovers;
@@ -185,10 +188,12 @@
         
         if(final >= 0) {
             document.getElementById('finalSacksDetail').innerText = finalSacks + " شيكارة (" + (finalSacks * 725) + " رغيف)";
-            document.getElementById('finalRagheefDetail').innerText = neededForNextSack;
+            document.getElementById('finalRagheefDetail').innerText = finalLeftover;
+            document.getElementById('neededForSack').innerText = needed;
         } else {
             document.getElementById('finalSacksDetail').innerText = "عجز / بالسالب";
             document.getElementById('finalRagheefDetail').innerText = "0";
+            document.getElementById('neededForSack').innerText = "0";
         }
     }
 
