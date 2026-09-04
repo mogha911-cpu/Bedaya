@@ -72,20 +72,13 @@
             color: #34495e;
             font-size: 14px;
         }
-        input, select {
+        input {
             width: 100%;
             padding: 10px;
             box-sizing: border-box;
             border: 1px solid #bdc3c7;
             border-radius: 5px;
             font-size: 16px;
-        }
-        .row {
-            display: flex;
-            gap: 10px;
-        }
-        .row .form-group {
-            flex: 1;
         }
         .result-box {
             margin-top: 15px;
@@ -104,16 +97,6 @@
             font-weight: bold;
             color: #0e6251;
         }
-        .alert-box {
-            background: #fdebd0;
-            border: 1px solid #f39c12;
-            padding: 12px;
-            border-radius: 5px;
-            margin-top: 15px;
-            color: #78281f;
-            font-size: 14px;
-            line-height: 1.6;
-        }
         .btn {
             background-color: #2980b9;
             color: white;
@@ -129,6 +112,25 @@
         .btn:hover {
             background-color: #2471a3;
         }
+        .btn-edit {
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        .btn-delete {
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
         .history-section {
             margin-top: 20px;
             border-top: 2px solid #ecf0f1;
@@ -137,11 +139,14 @@
         .history-card {
             background: #fdfefe;
             border: 1px solid #d5dbdb;
-            padding: 8px;
+            padding: 10px;
             border-radius: 5px;
             margin-bottom: 8px;
             font-size: 13px;
             color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
 </head>
@@ -153,7 +158,7 @@
     <!-- أزرار التنقل -->
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('general')" id="btnGeneral">دفتر الحسابات العام</button>
-        <button class="tab-btn" onclick="switchTab('inventory')" id="btnInventory">الجرد التفصيلي</button>
+        <button class="tab-btn" onclick="switchTab('dough')" id="btnDough">جرد العجين</button>
     </div>
 
     <!-- القسم الأول: دفتر الحسابات العام -->
@@ -177,7 +182,7 @@
             <div class="result-item">• تفصيل مبيعات اليوم: <br><span id="genSalesDetail">0</span></div>
         </div>
         
-        <button class="btn" onclick="saveGeneral()">حفظ اليومية 💾</button>
+        <button class="btn" id="saveBtn" onclick="saveGeneral()">حفظ اليومية 💾</button>
 
         <div class="history-section">
             <h3>السجلات المحفوظة</h3>
@@ -185,73 +190,25 @@
         </div>
     </div>
 
-    <!-- القسم الثاني: الجرد التفصيلي -->
-    <div id="inventorySection" class="section-content">
-        <div class="section-title">مطابقة رصيد الماكينة مع العجين الفعلي</div>
+    <!-- القسم الثاني: جرد العجين الجديد -->
+    <div id="doughSection" class="section-content">
+        <div class="section-title">حساب الشكاير المعجونة بدقة</div>
 
         <div class="form-group">
-            <label for="invDate">التاريخ:</label>
-            <input type="date" id="invDate">
+            <label for="doughBalance">رصيد المخبز (أو الرصيد الحالي بالأرغفة):</label>
+            <input type="number" id="doughBalance" placeholder="أدخل رصيد الأرغفة" oninput="calcDough()">
         </div>
 
         <div class="form-group">
-            <label for="machineBalance">رصيد الماكينة الحالي (أرغفة):</label>
-            <input type="number" id="machineBalance" placeholder="رصيد المكينة" oninput="calcInventory()">
+            <label for="doughRawSacks">عدد شكاير الدقيق الخام (السليمة):</label>
+            <input type="number" id="doughRawSacks" placeholder="أدخل عدد الشكاير الخام" oninput="calcDough()">
         </div>
 
-        <div class="form-group">
-            <label for="potStatus">حلة العجين:</label>
-            <select id="potStatus" onchange="calcInventory()">
-                <option value="0">فارغة (0 شيكارة)</option>
-                <option value="0.5">نصف شيكارة (362 رغيف)</option>
-                <option value="1">شيكارة كاملة (725 رغيف)</option>
-                <option value="2">شيكارتين (1450 رغيف)</option>
-                <option value="3">3 شكائر (2175 رغيف)</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="mixersCount">خلطات العجين (العدد بالشكائر):</label>
-            <select id="mixersCount" onchange="calcInventory()">
-                <option value="0">0 شيكارة</option>
-                <option value="1">1 شيكارة (725 رغيف)</option>
-                <option value="2">2 شيكارة (1450 رغيف)</option>
-                <option value="3">3 شكائر (2175 رغيف)</option>
-                <option value="4">4 شكائر (2900 رغيف)</option>
-                <option value="5">5 شكائر (3625 رغيف)</option>
-            </select>
-        </div>
-
-        <div class="row">
-            <div class="form-group">
-                <label for="traysCount">عدد الطوايل:</label>
-                <input type="number" id="traysCount" value="0" min="0" placeholder="عدد الطوايل" oninput="calcInventory()">
+        <div class="result-box" style="text-align: center;">
+            <div class="result-item" style="font-size: 18px;">
+                🍞 <b>عدد الشكاير المعجونة:</b><br>
+                <span id="doughResult" style="font-size: 24px; color: #117a65;">0 شيكارة</span>
             </div>
-            <div class="form-group">
-                <label for="breadPerTray">رغيف بكل طاوله:</label>
-                <input type="number" id="breadPerTray" value="0" min="0" placeholder="العدد بالطاولة" oninput="calcInventory()">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="rawSacks">الدقيق الخام (شكائر مقفولة سليمة):</label>
-            <input type="number" id="rawSacks" value="0" min="0" placeholder="عدد الشكائر" oninput="calcInventory()">
-        </div>
-
-        <div class="alert-box">
-            <strong>نتيجة الجرد والمطابقة:</strong><br>
-            - عجين الطوايل: <b><span id="traysTotal">0</span></b> رغيف<br>
-            - إجمالي العجين بالمخبز: <b><span id="totalDoughSacks">0</span></b> شيكارة (<b><span id="totalDoughRagheef">0</span></b> رغيف)<br>
-            - الدقيق الخام: <b><span id="rawSacksCount">0</span></b> شيكارة<br>
-            <hr style="border: 0; border-top: 1px dashed #f39c12; margin: 8px 0;">
-            <span id="auditResult" style="font-weight: bold; color: #78281f;">أدخل البيانات لمقارنة رصيد المكينة بالعجين...</span>
-        </div>
-
-        <button class="btn" onclick="saveInventory()">حفظ تقرير الجرد 💾</button>
-
-        <div class="history-section">
-            <h3>جرد الأيام السابقة</h3>
-            <div id="invHistoryList">لا توجد تقارير محفوظة.</div>
         </div>
     </div>
 
@@ -259,27 +216,23 @@
 
 <script>
     document.getElementById('genDate').valueAsDate = new Date();
-    document.getElementById('invDate').valueAsDate = new Date();
-    
     loadGeneralHistory();
-    loadInvHistory();
 
     function switchTab(tab) {
         document.getElementById('generalSection').classList.remove('active');
-        document.getElementById('inventorySection').classList.remove('active');
+        document.getElementById('doughSection').classList.remove('active');
         document.getElementById('btnGeneral').classList.remove('active');
-        document.getElementById('btnInventory').classList.remove('active');
+        document.getElementById('btnDough').classList.remove('active');
 
         if(tab === 'general') {
             document.getElementById('generalSection').classList.add('active');
             document.getElementById('btnGeneral').classList.add('active');
         } else {
-            document.getElementById('inventorySection').classList.add('active');
-            document.getElementById('btnInventory').classList.add('active');
+            document.getElementById('doughSection').classList.add('active');
+            document.getElementById('btnDough').classList.add('active');
         }
     }
 
-    // حسابات الحساب العام بدون الجزء المزعج الأخير
     function calcGeneral() {
         let opening = parseFloat(document.getElementById('openingBalance').value) || 0;
         let sales = parseFloat(document.getElementById('todaySales').value) || 0;
@@ -309,9 +262,18 @@
         if(!date) { alert('حدد التاريخ'); return; }
 
         let history = JSON.parse(localStorage.getItem('gen_history')) || [];
-        history.unshift({ date, opening, sales });
+        
+        // التحقق إذا كان التاريخ موجود مسبقاً لتعديله أو إضافته جديد
+        let existingIndex = history.findIndex(i => i.date === date);
+        if(existingIndex >= 0) {
+            history[existingIndex] = { date, opening, sales };
+            alert('تم تحديث اليومية بنجاح! 🔄');
+        } else {
+            history.unshift({ date, opening, sales });
+            alert('تم حفظ اليومية بنجاح! 💾');
+        }
+
         localStorage.setItem('gen_history', JSON.stringify(history));
-        alert('تم الحفظ بنجاح!');
         loadGeneralHistory();
     }
 
@@ -321,72 +283,43 @@
         if(history.length === 0) { list.innerHTML = 'لا توجد سجلات.'; return; }
         
         let html = '';
-        history.forEach(i => {
+        history.forEach((i, index) => {
             let final = i.opening - i.sales;
-            html += `<div class="history-card"><b>التاريخ: ${i.date}</b><br>- افتتاحي: ${i.opening} | مبيعات: ${i.sales} | النهائي: ${final} رغيف</div>`;
+            html += `<div class="history-card">
+                <div><b>التاريخ: ${i.date}</b><br>افتتاحي: ${i.opening} | مبيعات: ${i.sales} | النهائي: ${final} رغيف</div>
+                <div>
+                    <button class="btn-edit" onclick="editRecord('${i.date}', ${i.opening}, ${i.sales})">تعديل</button>
+                    <button class="btn-delete" onclick="deleteRecord(${index})">حذف</button>
+                </div>
+            </div>`;
         });
         list.innerHTML = html;
     }
 
-    // حسابات الجرد التفصيلي
-    function calcInventory() {
-        let machineBalance = parseFloat(document.getElementById('machineBalance').value) || 0;
-        let potVal = parseFloat(document.getElementById('potStatus').value) || 0;
-        let mixersVal = parseFloat(document.getElementById('mixersCount').value) || 0;
-        let traysCount = parseFloat(document.getElementById('traysCount').value) || 0;
-        let breadPerTray = parseFloat(document.getElementById('breadPerTray').value) || 0;
-        let rawSacks = parseFloat(document.getElementById('rawSacks').value) || 0;
+    function editRecord(date, opening, sales) {
+        document.getElementById('genDate').value = date;
+        document.getElementById('openingBalance').value = opening;
+        document.getElementById('todaySales').value = sales;
+        calcGeneral();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
-        let traysTotal = traysCount * breadPerTray;
-        document.getElementById('traysTotal').innerText = traysTotal;
-
-        let totalDoughRagheef = (potVal * 725) + (mixersVal * 725) + traysTotal;
-        let totalDoughSacksEquivalent = (totalDoughRagheef / 725).toFixed(2);
-
-        document.getElementById('totalDoughSacks').innerText = totalDoughSacksEquivalent;
-        document.getElementById('totalDoughRagheef').innerText = totalDoughRagheef;
-        document.getElementById('rawSacksCount').innerText = rawSacks;
-
-        let auditMsg = "";
-        let diff = machineBalance - totalDoughRagheef;
-        
-        if(machineBalance === 0 && totalDoughRagheef === 0) {
-            auditMsg = "ℹ️ أدخل الرصيد والعجين لمقارنة الجرد.";
-        } else if(Math.abs(diff) <= 30) {
-            auditMsg = "✅ الجرد ممتاز! رصيد الماكينة مطابق للعجين الفعلي (الفرق: " + diff.toFixed(0) + " رغيف).";
-        } else if(diff > 0) {
-            auditMsg = "⚠️ تنبيه عجز: رصيد الماكينة أكبر من العجين الفعلي بـ " + diff.toFixed(0) + " رغيف.";
-        } else {
-            auditMsg = "⚠️ تنبيه زيادة: العجين الفعلي بالمخبز أكبر من رصيد الماكينة بـ " + Math.abs(diff).toFixed(0) + " رغيف.";
+    function deleteRecord(index) {
+        if(confirm('هل أنت متأكد من حذف هذا السجل؟')) {
+            let history = JSON.parse(localStorage.getItem('gen_history')) || [];
+            history.splice(index, 1);
+            localStorage.setItem('gen_history', JSON.stringify(history));
+            loadGeneralHistory();
         }
-        document.getElementById('auditResult').innerText = auditMsg;
     }
 
-    function saveInventory() {
-        let date = document.getElementById('invDate').value;
-        let machine = document.getElementById('machineBalance').value || 0;
-        let totalDough = document.getElementById('totalDoughRagheef').innerText;
-        let raw = document.getElementById('rawSacks').value || 0;
-        if(!date) { alert('حدد التاريخ'); return; }
+    // حساب جرد العجين (الرصيد ÷ 725 - الشكاير الخام)
+    function calcDough() {
+        let balance = parseFloat(document.getElementById('doughBalance').value) || 0;
+        let rawSacks = parseFloat(document.getElementById('doughRawSacks').value) || 0;
 
-        let record = { date, machine, totalDough, raw };
-        let history = JSON.parse(localStorage.getItem('inv_history')) || [];
-        history.unshift(record);
-        localStorage.setItem('inv_history', JSON.stringify(history));
-        alert('تم حفظ تقرير الجرد بنجاح!');
-        loadInvHistory();
-    }
-
-    function loadInvHistory() {
-        let history = JSON.parse(localStorage.getItem('inv_history')) || [];
-        let list = document.getElementById('invHistoryList');
-        if(history.length === 0) { list.innerHTML = 'لا توجد تقارير محفوظة.'; return; }
-
-        let html = '';
-        history.forEach(i => {
-            html += `<div class="history-card"><b>التاريخ: ${i.date}</b><br>- مكينة: ${i.machine} | عجين: ${i.totalDough} رغيف | شكائر: ${i.raw}</div>`;
-        });
-        list.innerHTML = html;
+        let kneadedSacks = (balance / 725) - rawSacks;
+        document.getElementById('doughResult').innerText = kneadedSacks.toFixed(2) + " شيكارة معجونة";
     }
 </script>
 
