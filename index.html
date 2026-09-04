@@ -64,13 +64,24 @@
             border: 1px solid #a3e4d7;
         }
         .result-item {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 15px;
             color: #117a65;
+            line-height: 1.6;
         }
         .result-item span {
             font-weight: bold;
             color: #0e6251;
+        }
+        .highlight-red {
+            background: #fdebd0;
+            border: 1px solid #f39c12;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            color: #78281f;
+            font-size: 14px;
+            line-height: 1.6;
         }
         .history-section {
             margin-top: 25px;
@@ -106,7 +117,10 @@
         <input type="number" id="openingBalance" placeholder="مثلاً: رصيد السيستم اليومي" oninput="calcOpening()">
     </div>
     <div class="result-box" style="background: #ebf5fb; border-color: #aed6f1;">
-        <div class="result-item" style="color: #1b4f72;">شكائر الرصيد الموجودة بالمخبز: <span id="openingSacks">0</span> شيكارة <small>(ومتبقي <span id="openingLeftover">0</span> رغيف)</small></div>
+        <div class="result-item" style="color: #1b4f72;">
+            شكائر الرصيد بالمخبز: <span id="openingSacks">0</span> شيكارة <br>
+            <small>(متبقي رغفان مفردة: <span id="openingLeftover">0</span>)</small>
+        </div>
     </div>
 
     <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
@@ -117,13 +131,19 @@
     </div>
     
     <div class="result-box">
-        <div class="result-item">الشكائر اللي اشتغلتها (المستحقة): <span id="salesSacks">0</span> شيكارة</div>
-        <div class="result-item">كسور الأرغفة الباقية من البيع: <span id="salesLeftover">0</span> رغيف</div>
-        <div class="result-item" style="border-top: 1px dashed #a3e4d7; padding-top: 8px; margin-top: 8px;">
-            الرصيد النهائي المتبقي بالمكينة: <span id="finalBalance">0</span> رغيف
+        <div class="result-item">
+            • الشكائر اللي اشتغلتها: <span id="salesSacks">0</span> شيكارة<br>
+            • كسور مبيعات اليوم: <span id="salesLeftover">0</span> رغيف
         </div>
-        <div class="result-item" style="color: #900C3F; font-weight: bold;">
-            تفصيل الباقي: <span id="finalSacksDetail">0</span> شيكارة كاملة وباقي <span id="finalRagheefDetail">0</span> رغيف <small>(عشان تقفل شيكارة كمان)</small>
+        <hr style="border: 0; border-top: 1px dashed #a3e4d7; margin: 8px 0;">
+        <div class="result-item">
+            • الرصيد النهائي بالمكينة: <span id="finalBalance">0</span> رغيف
+        </div>
+        
+        <div class="highlight-red">
+            <strong>تفصيل الرصيد المتبقي:</strong><br>
+            يساوي <b><span id="finalSacksDetail">0</span></b> شيكارة كاملة<br>
+            ويتبقى <b><span id="finalRagheefDetail">0</span></b> رغيف (عشان تقفل شيكارة كمان).
         </div>
     </div>
 
@@ -136,7 +156,6 @@
 </div>
 
 <script>
-    // تفعيل تاريخ اليوم تلقائياً
     document.getElementById('workDate').valueAsDate = new Date();
     loadHistory();
 
@@ -156,10 +175,8 @@
         let salesLeftovers = sales % 725;
         let final = opening - sales;
 
-        // حساب تفصيل الرصيد النهائي (الشكائر والكسور الباقية)
         let finalSacks = Math.floor(Math.abs(final) / 725);
         let finalLeftover = Math.abs(final) % 725;
-        // حساب كام رغيف باقي عشان تقفل الشيكارة التالية (لو الرصيد بالموجب)
         let neededForNextSack = final > 0 ? (725 - (final % 725)) % 725 : 0;
 
         document.getElementById('salesSacks').innerText = salesSacks;
@@ -167,10 +184,10 @@
         document.getElementById('finalBalance').innerText = final;
         
         if(final >= 0) {
-            document.getElementById('finalSacksDetail').innerText = finalSacks + " (" + (finalSacks * 725) + " رغيف)";
-            document.getElementById('finalRagheefDetail').innerText = finalLeftover;
+            document.getElementById('finalSacksDetail').innerText = finalSacks + " شيكارة (" + (finalSacks * 725) + " رغيف)";
+            document.getElementById('finalRagheefDetail').innerText = neededForNextSack;
         } else {
-            document.getElementById('finalSacksDetail').innerText = "بالساقع/عجز (" + final + ")";
+            document.getElementById('finalSacksDetail').innerText = "عجز / بالسالب";
             document.getElementById('finalRagheefDetail').innerText = "0";
         }
     }
@@ -222,8 +239,8 @@
                 <div class="history-card">
                     <b>التاريخ: ${item.date}</b><br>
                     - الرصيد الافتتاحي: ${item.opening} رغيف (${item.openingSacks} شيكارة)<br>
-                    - مبيعات اليوم: ${item.sales} رغيف (${item.salesSacks} شيكارة دقيق)<br>
-                    - الرصيد المتبقي: <b>${item.final} رغيف</b> 
+                    - مبيعات اليوم: ${item.sales} رغيف (${item.salesSacks} شيكارة)<br>
+                    - الرصيد المتبقي: <b>${item.final} رغيف</b>
                 </div>
             `;
         });
