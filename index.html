@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دفتر حسابات الفرن البلدي</title>
+    <title>إدارة وجرد المخبز البلدي</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,16 +12,55 @@
             padding: 15px;
         }
         .container {
-            max-width: 450px;
+            max-width: 480px;
             margin: 0 auto;
             background: #ffffff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        h2, h3 {
+        h2 {
             text-align: center;
             color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        .tab-btn {
+            flex: 1;
+            background: #bdc3c7;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .tab-btn.active {
+            background: #2c3e50;
+        }
+        .section-content {
+            display: none;
+        }
+        .section-content.active {
+            display: block;
+        }
+        .section-title {
+            background: #27ae60;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 15px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            text-align: center;
         }
         .form-group {
             margin-bottom: 12px;
@@ -33,7 +72,7 @@
             color: #34495e;
             font-size: 14px;
         }
-        input {
+        input, select {
             width: 100%;
             padding: 10px;
             box-sizing: border-box;
@@ -41,20 +80,12 @@
             border-radius: 5px;
             font-size: 16px;
         }
-        .btn {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
+        .row {
+            display: flex;
+            gap: 10px;
         }
-        .btn:hover {
-            background-color: #219653;
+        .row .form-group {
+            flex: 1;
         }
         .result-box {
             margin-top: 15px;
@@ -64,192 +95,298 @@
             border: 1px solid #a3e4d7;
         }
         .result-item {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 15px;
             color: #117a65;
-            line-height: 1.6;
+            line-height: 1.5;
         }
         .result-item span {
             font-weight: bold;
             color: #0e6251;
         }
-        .highlight-red {
+        .alert-box {
             background: #fdebd0;
             border: 1px solid #f39c12;
-            padding: 10px;
+            padding: 12px;
             border-radius: 5px;
-            margin-top: 10px;
+            margin-top: 15px;
             color: #78281f;
             font-size: 14px;
             line-height: 1.6;
         }
+        .btn {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .btn:hover {
+            background-color: #2471a3;
+        }
         .history-section {
-            margin-top: 25px;
+            margin-top: 20px;
             border-top: 2px solid #ecf0f1;
-            padding-top: 15px;
+            padding-top: 10px;
         }
         .history-card {
             background: #fdfefe;
             border: 1px solid #d5dbdb;
-            padding: 10px;
+            padding: 8px;
             border-radius: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 13px;
             color: #333;
-        }
-        .history-card b {
-            color: #2980b9;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>دفتر حسابات الفرن</h2>
-    
-    <div class="form-group">
-        <label for="workDate">تاريخ اليوم:</label>
-        <input type="date" id="workDate">
+    <h2>حسابات وجرد المخبز</h2>
+
+    <!-- أزرار التنقل -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('general')" id="btnGeneral">دفتر الحسابات العام</button>
+        <button class="tab-btn" onclick="switchTab('inventory')" id="btnInventory">الجرد التفصيلي</button>
     </div>
 
-    <div class="form-group">
-        <label for="openingBalance">الرصيد الافتتاحي (أرغفة المخبز في البداية):</label>
-        <input type="number" id="openingBalance" placeholder="مثلاً: رصيد السيستم اليومي" oninput="calcOpening()">
-    </div>
-    <div class="result-box" style="background: #ebf5fb; border-color: #aed6f1;">
-        <div class="result-item" style="color: #1b4f72;">
-            شكائر الرصيد بالمخبز: <span id="openingSacks">0</span> شيكارة <br>
-            <small>(متبقي رغفان مفردة: <span id="openingLeftover">0</span>)</small>
+    <!-- القسم الأول: دفتر الحسابات العام -->
+    <div id="generalSection" class="section-content active">
+        <div class="form-group">
+            <label for="genDate">التاريخ:</label>
+            <input type="date" id="genDate">
         </div>
-    </div>
-
-    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-
-    <div class="form-group">
-        <label for="todaySales">مبيعات اليوم (الأرغفة المباعة):</label>
-        <input type="number" id="todaySales" placeholder="عدد الأرغفة اللي اتباعت" oninput="calcSales()">
-    </div>
-    
-    <div class="result-box">
-        <div class="result-item">
-            • الشكائر اللي اشتغلتها: <span id="salesSacks">0</span> شيكارة<br>
-            • كسور مبيعات اليوم: <span id="salesLeftover">0</span> رغيف
+        <div class="form-group">
+            <label for="openingBalance">الرصيد الافتتاحي (أرغفة المخبز):</label>
+            <input type="number" id="openingBalance" placeholder="رصيد أول اليوم بالرغيف" oninput="calcGeneral()">
         </div>
-        <hr style="border: 0; border-top: 1px dashed #a3e4d7; margin: 8px 0;">
-        <div class="result-item">
-            • الرصيد النهائي بالمكينة: <span id="finalBalance">0</span> رغيف
+        <div class="form-group">
+            <label for="todaySales">مبيعات اليوم (الأرغفة المباعة):</label>
+            <input type="number" id="todaySales" placeholder="الأرغفة اللي اتباعت" oninput="calcGeneral()">
+        </div>
+
+        <div class="result-box">
+            <div class="result-item">• تفصيل الرصيد الافتتاحي: <br><span id="genOpeningDetail">0</span></div>
+            <hr style="border: 0; border-top: 1px dashed #a3e4d7; margin: 8px 0;">
+            <div class="result-item">• تفصيل مبيعات اليوم: <br><span id="genSalesDetail">0</span></div>
         </div>
         
-        <div class="highlight-red">
-            <strong>تفصيل الرصيد المتبقي:</strong><br>
-            يساوي <b><span id="finalSacksDetail">0</span></b> شيكارة كاملة<br>
-            ويتبقى <b><span id="finalRagheefDetail">0</span></b> رغيف كسور<br>
-            (تحتاج إلى <b><span id="neededForSack">0</span></b> رغيف إضافي لتقفيل شيكارة كمان).
+        <button class="btn" onclick="saveGeneral()">حفظ اليومية 💾</button>
+
+        <div class="history-section">
+            <h3>السجلات المحفوظة</h3>
+            <div id="genHistoryList">لا توجد سجلات.</div>
         </div>
     </div>
 
-    <button class="btn" onclick="saveDay()">حفظ يومية اليوم 💾</button>
+    <!-- القسم الثاني: الجرد التفصيلي -->
+    <div id="inventorySection" class="section-content">
+        <div class="section-title">مطابقة رصيد الماكينة مع العجين الفعلي</div>
 
-    <div class="history-section">
-        <h3>الأيام السابقة المحفوظة</h3>
-        <div id="historyList">لم يتم حفظ أيام بعد.</div>
+        <div class="form-group">
+            <label for="invDate">التاريخ:</label>
+            <input type="date" id="invDate">
+        </div>
+
+        <div class="form-group">
+            <label for="machineBalance">رصيد الماكينة الحالي (أرغفة):</label>
+            <input type="number" id="machineBalance" placeholder="رصيد المكينة" oninput="calcInventory()">
+        </div>
+
+        <div class="form-group">
+            <label for="potStatus">حلة العجين:</label>
+            <select id="potStatus" onchange="calcInventory()">
+                <option value="0">فارغة (0 شيكارة)</option>
+                <option value="0.5">نصف شيكارة (362 رغيف)</option>
+                <option value="1">شيكارة كاملة (725 رغيف)</option>
+                <option value="2">شيكارتين (1450 رغيف)</option>
+                <option value="3">3 شكائر (2175 رغيف)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="mixersCount">خلطات العجين (العدد بالشكائر):</label>
+            <select id="mixersCount" onchange="calcInventory()">
+                <option value="0">0 شيكارة</option>
+                <option value="1">1 شيكارة (725 رغيف)</option>
+                <option value="2">2 شيكارة (1450 رغيف)</option>
+                <option value="3">3 شكائر (2175 رغيف)</option>
+                <option value="4">4 شكائر (2900 رغيف)</option>
+                <option value="5">5 شكائر (3625 رغيف)</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="traysCount">عدد الطوايل:</label>
+                <input type="number" id="traysCount" value="0" min="0" placeholder="عدد الطوايل" oninput="calcInventory()">
+            </div>
+            <div class="form-group">
+                <label for="breadPerTray">رغيف بكل طاوله:</label>
+                <input type="number" id="breadPerTray" value="0" min="0" placeholder="العدد بالطاولة" oninput="calcInventory()">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="rawSacks">الدقيق الخام (شكائر مقفولة سليمة):</label>
+            <input type="number" id="rawSacks" value="0" min="0" placeholder="عدد الشكائر" oninput="calcInventory()">
+        </div>
+
+        <div class="alert-box">
+            <strong>نتيجة الجرد والمطابقة:</strong><br>
+            - عجين الطوايل: <b><span id="traysTotal">0</span></b> رغيف<br>
+            - إجمالي العجين بالمخبز: <b><span id="totalDoughSacks">0</span></b> شيكارة (<b><span id="totalDoughRagheef">0</span></b> رغيف)<br>
+            - الدقيق الخام: <b><span id="rawSacksCount">0</span></b> شيكارة<br>
+            <hr style="border: 0; border-top: 1px dashed #f39c12; margin: 8px 0;">
+            <span id="auditResult" style="font-weight: bold; color: #78281f;">أدخل البيانات لمقارنة رصيد المكينة بالعجين...</span>
+        </div>
+
+        <button class="btn" onclick="saveInventory()">حفظ تقرير الجرد 💾</button>
+
+        <div class="history-section">
+            <h3>جرد الأيام السابقة</h3>
+            <div id="invHistoryList">لا توجد تقارير محفوظة.</div>
+        </div>
     </div>
+
 </div>
 
 <script>
-    document.getElementById('workDate').valueAsDate = new Date();
-    loadHistory();
+    document.getElementById('genDate').valueAsDate = new Date();
+    document.getElementById('invDate').valueAsDate = new Date();
+    
+    loadGeneralHistory();
+    loadInvHistory();
 
-    function calcOpening() {
-        let opening = parseFloat(document.getElementById('openingBalance').value) || 0;
-        let sacks = Math.floor(opening / 725);
-        let leftovers = opening % 725;
-        document.getElementById('openingSacks').innerText = sacks;
-        document.getElementById('openingLeftover').innerText = leftovers;
+    function switchTab(tab) {
+        document.getElementById('generalSection').classList.remove('active');
+        document.getElementById('inventorySection').classList.remove('active');
+        document.getElementById('btnGeneral').classList.remove('active');
+        document.getElementById('btnInventory').classList.remove('active');
+
+        if(tab === 'general') {
+            document.getElementById('generalSection').classList.add('active');
+            document.getElementById('btnGeneral').classList.add('active');
+        } else {
+            document.getElementById('inventorySection').classList.add('active');
+            document.getElementById('btnInventory').classList.add('active');
+        }
     }
 
-    function calcSales() {
+    // حسابات الحساب العام بدون الجزء المزعج الأخير
+    function calcGeneral() {
         let opening = parseFloat(document.getElementById('openingBalance').value) || 0;
         let sales = parseFloat(document.getElementById('todaySales').value) || 0;
 
-        let salesSacks = Math.floor(sales / 725);
-        let salesLeftovers = sales % 725;
-        let final = opening - sales;
-
-        let finalSacks = Math.floor(Math.abs(final) / 725);
-        let finalLeftover = Math.abs(final) % 725;
-        
-        // المعادلة المضبوطة: الرغفان الباقية + الكمية المطلوبة للوصول إلى 725
-        let needed = finalLeftover === 0 ? 0 : (725 - finalLeftover);
-
-        document.getElementById('salesSacks').innerText = salesSacks;
-        document.getElementById('salesLeftover').innerText = salesLeftovers;
-        document.getElementById('finalBalance').innerText = final;
-        
-        if(final >= 0) {
-            document.getElementById('finalSacksDetail').innerText = finalSacks + " شيكارة (" + (finalSacks * 725) + " رغيف)";
-            document.getElementById('finalRagheefDetail').innerText = finalLeftover;
-            document.getElementById('neededForSack').innerText = needed;
-        } else {
-            document.getElementById('finalSacksDetail').innerText = "عجز / بالسالب";
-            document.getElementById('finalRagheefDetail').innerText = "0";
-            document.getElementById('neededForSack').innerText = "0";
+        function formatSacksAndBreakdown(totalRagheef) {
+            let sacks = Math.floor(totalRagheef / 725);
+            let leftover = totalRagheef % 725;
+            let needed = leftover === 0 ? 0 : (725 - leftover);
+            
+            let text = sacks + " شيكارة (" + (sacks * 725) + " رغيف)";
+            if(leftover > 0) {
+                text += " + " + leftover + " رغيف زيادة <br><span style='color:#c0392b; font-size:13px;'>⚠️ يلزمك <b>" + needed + " رغيف</b> لتقفيل الشيكارة التالية بالكامل.</span>";
+            } else {
+                text += " <span style='color:#27ae60; font-size:13px;'>✅ مضبوطة تماماً بدون أي كسور.</span>";
+            }
+            return text;
         }
+
+        document.getElementById('genOpeningDetail').innerHTML = formatSacksAndBreakdown(opening);
+        document.getElementById('genSalesDetail').innerHTML = formatSacksAndBreakdown(sales);
     }
 
-    function saveDay() {
-        let date = document.getElementById('workDate').value;
+    function saveGeneral() {
+        let date = document.getElementById('genDate').value;
         let opening = document.getElementById('openingBalance').value || 0;
         let sales = document.getElementById('todaySales').value || 0;
-        let openingSacks = document.getElementById('openingSacks').innerText;
-        let salesSacks = document.getElementById('salesSacks').innerText;
-        let final = document.getElementById('finalBalance').innerText;
-        let detailText = document.getElementById('finalSacksDetail').innerText;
+        if(!date) { alert('حدد التاريخ'); return; }
 
-        if(!date) {
-            alert('برجاء تحديد التاريخ');
-            return;
-        }
-
-        let dayData = {
-            date: date,
-            opening: opening,
-            openingSacks: openingSacks,
-            sales: sales,
-            salesSacks: salesSacks,
-            final: final,
-            detail: detailText
-        };
-
-        let history = JSON.parse(localStorage.getItem('feren_history')) || [];
-        history.unshift(dayData);
-        localStorage.setItem('feren_history', JSON.stringify(history));
-
-        alert('تم حفظ يومية اليوم بنجاح!');
-        loadHistory();
+        let history = JSON.parse(localStorage.getItem('gen_history')) || [];
+        history.unshift({ date, opening, sales });
+        localStorage.setItem('gen_history', JSON.stringify(history));
+        alert('تم الحفظ بنجاح!');
+        loadGeneralHistory();
     }
 
-    function loadHistory() {
-        let history = JSON.parse(localStorage.getItem('feren_history')) || [];
-        let listDiv = document.getElementById('historyList');
+    function loadGeneralHistory() {
+        let history = JSON.parse(localStorage.getItem('gen_history')) || [];
+        let list = document.getElementById('genHistoryList');
+        if(history.length === 0) { list.innerHTML = 'لا توجد سجلات.'; return; }
         
-        if(history.length === 0) {
-            listDiv.innerHTML = 'لم يتم حفظ أيام بعد.';
-            return;
+        let html = '';
+        history.forEach(i => {
+            let final = i.opening - i.sales;
+            html += `<div class="history-card"><b>التاريخ: ${i.date}</b><br>- افتتاحي: ${i.opening} | مبيعات: ${i.sales} | النهائي: ${final} رغيف</div>`;
+        });
+        list.innerHTML = html;
+    }
+
+    // حسابات الجرد التفصيلي
+    function calcInventory() {
+        let machineBalance = parseFloat(document.getElementById('machineBalance').value) || 0;
+        let potVal = parseFloat(document.getElementById('potStatus').value) || 0;
+        let mixersVal = parseFloat(document.getElementById('mixersCount').value) || 0;
+        let traysCount = parseFloat(document.getElementById('traysCount').value) || 0;
+        let breadPerTray = parseFloat(document.getElementById('breadPerTray').value) || 0;
+        let rawSacks = parseFloat(document.getElementById('rawSacks').value) || 0;
+
+        let traysTotal = traysCount * breadPerTray;
+        document.getElementById('traysTotal').innerText = traysTotal;
+
+        let totalDoughRagheef = (potVal * 725) + (mixersVal * 725) + traysTotal;
+        let totalDoughSacksEquivalent = (totalDoughRagheef / 725).toFixed(2);
+
+        document.getElementById('totalDoughSacks').innerText = totalDoughSacksEquivalent;
+        document.getElementById('totalDoughRagheef').innerText = totalDoughRagheef;
+        document.getElementById('rawSacksCount').innerText = rawSacks;
+
+        let auditMsg = "";
+        let diff = machineBalance - totalDoughRagheef;
+        
+        if(machineBalance === 0 && totalDoughRagheef === 0) {
+            auditMsg = "ℹ️ أدخل الرصيد والعجين لمقارنة الجرد.";
+        } else if(Math.abs(diff) <= 30) {
+            auditMsg = "✅ الجرد ممتاز! رصيد الماكينة مطابق للعجين الفعلي (الفرق: " + diff.toFixed(0) + " رغيف).";
+        } else if(diff > 0) {
+            auditMsg = "⚠️ تنبيه عجز: رصيد الماكينة أكبر من العجين الفعلي بـ " + diff.toFixed(0) + " رغيف.";
+        } else {
+            auditMsg = "⚠️ تنبيه زيادة: العجين الفعلي بالمخبز أكبر من رصيد الماكينة بـ " + Math.abs(diff).toFixed(0) + " رغيف.";
         }
+        document.getElementById('auditResult').innerText = auditMsg;
+    }
+
+    function saveInventory() {
+        let date = document.getElementById('invDate').value;
+        let machine = document.getElementById('machineBalance').value || 0;
+        let totalDough = document.getElementById('totalDoughRagheef').innerText;
+        let raw = document.getElementById('rawSacks').value || 0;
+        if(!date) { alert('حدد التاريخ'); return; }
+
+        let record = { date, machine, totalDough, raw };
+        let history = JSON.parse(localStorage.getItem('inv_history')) || [];
+        history.unshift(record);
+        localStorage.setItem('inv_history', JSON.stringify(history));
+        alert('تم حفظ تقرير الجرد بنجاح!');
+        loadInvHistory();
+    }
+
+    function loadInvHistory() {
+        let history = JSON.parse(localStorage.getItem('inv_history')) || [];
+        let list = document.getElementById('invHistoryList');
+        if(history.length === 0) { list.innerHTML = 'لا توجد تقارير محفوظة.'; return; }
 
         let html = '';
-        history.forEach(item => {
-            html += `
-                <div class="history-card">
-                    <b>التاريخ: ${item.date}</b><br>
-                    - الرصيد الافتتاحي: ${item.opening} رغيف (${item.openingSacks} شيكارة)<br>
-                    - مبيعات اليوم: ${item.sales} رغيف (${item.salesSacks} شيكارة)<br>
-                    - الرصيد المتبقي: <b>${item.final} رغيف</b>
-                </div>
-            `;
+        history.forEach(i => {
+            html += `<div class="history-card"><b>التاريخ: ${i.date}</b><br>- مكينة: ${i.machine} | عجين: ${i.totalDough} رغيف | شكائر: ${i.raw}</div>`;
         });
-        listDiv.innerHTML = html;
+        list.innerHTML = html;
     }
 </script>
 
