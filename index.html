@@ -3,380 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BedaiaERP - النسخة الإنشائية الشاملة مع المشاركة</title>
+    <title>دفتر حسابات الفرن البلدي</title>
     <style>
-        body { font-family: Tahoma, sans-serif; background-color: #f4f6f9; margin: 0; padding: 10px; color: #333; }
-        .container { max-width: 600px; margin: auto; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #2c3e50; font-size: 1.2rem; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-top: 0; }
-        
-        /* Search Bar */
-        .search-box { margin-bottom: 15px; }
-        .search-box input { width: 100%; padding: 10px; box-sizing: border-box; border: 2px solid #3498db; border-radius: 6px; font-size: 0.95rem; background: #fdfefe; }
-
-        .section-title { background: #3498db; color: white; padding: 8px 12px; margin-top: 15px; border-radius: 4px; font-size: 0.95rem; }
-        ul { list-style: none; padding: 0; margin: 5px 0; }
-        li { background: #f8f9fa; margin: 5px 0; padding: 10px; border-radius: 4px; border-right: 4px solid #2980b9; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
-        li:hover { background: #e2e6ea; }
-        .badge { background: #e74c3c; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.75rem; }
-        
-        /* Action Buttons Container */
-        .backup-container { margin-top: 20px; padding: 10px; background: #ebedef; border-radius: 6px; display: flex; flex-direction: column; gap: 8px; }
-        .backup-row { display: flex; gap: 8px; }
-        .backup-container button { background: #34495e; color: white; padding: 8px; font-size: 0.8rem; border: none; border-radius: 4px; cursor: pointer; flex: 1; }
-        .btn-share-all { background: #27ae60 !important; }
-
-        /* Modal Styles */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; z-index: 1000; }
-        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 100%; max-width: 450px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
-        .modal-content h3 { margin-top: 0; color: #2c3e50; font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: bold; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem; }
-        .amount-row { display: flex; gap: 8px; }
-        .amount-row .form-group { flex: 1; margin-bottom: 0; }
-        .btn-container { display: flex; justify-content: space-between; gap: 8px; margin-top: 15px; }
-        button { padding: 8px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; flex: 1; }
-        .btn-save { background: #27ae60; color: white; }
-        .btn-edit { background: #f39c12; color: white; flex: 0.4; }
-        .btn-delete { background: #c0392b; color: white; flex: 0.4; }
-        .btn-share { background: #2980b9; color: white; flex: 0.4; }
-        .btn-close { background: #7f8c8d; color: white; }
-        
-        .output-box { margin-top: 15px; background: #eaf2f8; padding: 10px; border-radius: 4px; font-size: 0.85rem; }
-
-        /* بطاقة الشخص/السيارة (المجموعة) */
-        .entity-card { background: #fff; margin-bottom: 10px; border-radius: 6px; border: 1px solid #dcdde1; overflow: hidden; }
-        .entity-header { background: #f1f3f5; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; }
-        .entity-name { font-weight: bold; color: #2c3e50; }
-        .entity-balance { font-weight: bold; font-size: 0.9rem; padding: 3px 8px; border-radius: 12px; }
-        .balance-positive { background: #d4efdf; color: #196f3d; }
-        .balance-negative { background: #fadbd8; color: #922b21; }
-        .balance-zero { background: #eaecee; color: #616a6b; }
-
-        .record-item { background: #fff; padding: 8px 10px; border-top: 1px solid #eee; font-size: 0.85rem; }
-        .record-header { display: flex; justify-content: space-between; align-items: center; }
-        .tx-type { font-weight: bold; padding: 1px 6px; border-radius: 3px; font-size: 0.75rem; }
-        .tx-credit { background: #d4efdf; color: #196f3d; }
-        .tx-debit { background: #fadbd8; color: #922b21; }
-        .record-actions { margin-top: 5px; display: flex; justify-content: flex-end; gap: 4px; flex-wrap: wrap; }
-        .record-actions button { padding: 3px 6px; font-size: 0.75rem; flex: none; }
-
-        .folder-total-box {
-            margin-top: 12px; padding: 10px; background: #2c3e50; color: #fff;
-            border-radius: 6px; text-align: center; font-weight: bold; font-size: 0.95rem;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 15px;
         }
-
-        /* بانر تنبيه وضع التعديل */
-        .edit-mode-banner {
-            display: none;
-            background: #fff3cd; color: #856404; border: 2px solid #f39c12;
-            padding: 8px 10px; border-radius: 6px; margin-bottom: 12px;
-            font-size: 0.85rem; font-weight: bold; text-align: center;
+        .container {
+            max-width: 450px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .edit-mode-banner.show { display: block; }
-        .modal-content.editing { border: 3px solid #f39c12; }
-        .btn-cancel-edit { background: #f39c12; color: #fff; display: none; }
-        .btn-cancel-edit.show { display: block; }
+        h2, h3 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background-color: #219653;
+        }
+        .result-box {
+            margin-top: 15px;
+            background: #e8f8f5;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #a3e4d7;
+        }
+        .result-item {
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #117a65;
+        }
+        .result-item span {
+            font-weight: bold;
+            color: #0e6251;
+        }
+        .history-section {
+            margin-top: 25px;
+            border-top: 2px solid #ecf0f1;
+            padding-top: 15px;
+        }
+        .history-card {
+            background: #fdfefe;
+            border: 1px solid #d5dbdb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #333;
+        }
+        .history-card b {
+            color: #2980b9;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>BedaiaERP - النسخة الإنشائية الشاملة</h2>
-
-    <!-- محرك البحث العام -->
-    <div class="search-box">
-        <input type="text" id="globalSearch" placeholder="🔍 بحث عام عن أي بند، مقاول، مشروع، أو سيارة..." onkeyup="globalSearchFunction()">
+    <h2>دفتر حسابات الفرن</h2>
+    
+    <div class="form-group">
+        <label for="workDate">تاريخ اليوم:</label>
+        <input type="date" id="workDate">
     </div>
 
-    <div class="section-title">1. المشاريع الهندسية والموقع</div>
-    <ul>
-        <li onclick="openModule('إدارة المشاريع', ['مشاريع تحت التنفيذ', 'مشاريع مكتملة', 'الرسومات والمخططات الهندسية', 'المواد المطلوبة للموقع', 'المصاريف التشغيلية للموقع'])">إدارة ومتابعة المشاريع <span>📁</span></li>
-        <li onclick="openModule('دفتر يومية الموقع', ['سجل العمال والمعدات اليومي', 'حالة الطقس وسير العمل'])">دفتر يومية الموقع اليومي <span>📅</span></li>
-        <li onclick="openModule('معالجة المشاكل والطوارئ', ['مشاكل معلقة لم تُحل', 'مشاكل تم علاجها'])">معالجة المشاكل والطوارئ <span>⚠️</span></li>
-    </ul>
-
-    <div class="section-title">2. المقاولين الفرعيين والعقود</div>
-    <ul>
-        <li onclick="openModule('المقاولين الفرعيين', ['مقاول حديد (تسليح)', 'مقاول نجارة وتخشيب', 'مقاول طابوك وبناء', 'مقاول بلستر (لياسة)', 'مقاول صحي وكهرباء', 'مقاول تشطيبات عامة'])">مقاولي الباطن والمستخلصات <span>📝</span></li>
-        <li onclick="openModule('عروض الأسعار وجداول الكميات (BOQ)', ['عروض الأسعار المقدمة', 'جداول الكميات المعتمدة (BOQ)'])">عروض الأسعار وجداول الكميات (BOQ) <span>📊</span></li>
-    </ul>
-
-    <div class="section-title">3. المشتريات والمخازن واللوجستيات</div>
-    <ul>
-        <li onclick="openModule('الموردين وطلبات الشراء', ['قائمة الموردين', 'طلبات الشراء المعلقة', 'فواتير المشتريات'])">الموردين وطلبات الشراء <span>🛒</span></li>
-        <li onclick="openModule('المستودعات والجرد', ['مستودع الموقع الرئيسي', 'حركات الوارد والصادر', 'جرد المواد'])">المستودعات والجرد <span>📦</span></li>
-        <li onclick="openModule('سيارات نقل العمال والمعدات', ['سجل أساطيل سيارات النقل والباصات', 'حركة تشغيل وتوصيل العمال', 'مصاريف الوقود والصيانة الدورية', 'الرخص والمخالفات المرورية'])">إدارة سيارات النقل واللوجستيات <span>🚚</span></li>
-    </ul>
-
-    <div class="section-title">4. الشؤون المالية والموارد البشرية</div>
-    <ul>
-        <li onclick="openModule('الخزينة والبنوك', ['الخزينة النقدية اليومية', 'حسابات البنوك', 'المصروفات النثرية'])">الخزينة والبنوك والمصروفات <span>💰</span></li>
-        <li onclick="openModule('حسابات العملاء', ['حسابات العملاء النشطين', 'الأرصدة المستحقة ومستخلصات المالك'])">حسابات العملاء <span>👥</span></li>
-        <li onclick="openModule('سندات القبض والصرف', ['سندات القبض النقدية', 'سندات الصرف'])">سندات القبض والصرف <span>📄</span></li>
-        <li onclick="openModule('سجلات الدوام والرواتب', ['سجل الحضور والدوام اليومي', 'مسيرات الرواتب الشهرية', 'السلف والخصومات'])">سجلات الدوام ومسيرات الرواتب <span>👥</span></li>
-        <li onclick="openModule('حسابات ضريبة القيمة المضافة', ['إقرارات ضريبية', 'فواتير خاضعة للضريبة'])">ضريبة القيمة المضافة (VAT) <span>🧮</span></li>
-    </ul>
-
-    <!-- أزرار النسخ الاحتياطي والمشاركة الشاملة -->
-    <div class="backup-container">
-        <div class="backup-row">
-            <button onclick="exportBackup()">📥 تصدير ملف</button>
-            <button onclick="document.getElementById('importFile').click()">📤 استعادة</button>
-            <input type="file" id="importFile" style="display:none" onchange="importBackup(event)">
-        </div>
-        <button class="btn-share-all" onclick="shareAllDataWhatsApp()">📢 مشاركة جميع بيانات النظام (واتساب)</button>
+    <div class="form-group">
+        <label for="openingBalance">الرصيد الافتتاحي (أرغفة المخبز في البداية):</label>
+        <input type="number" id="openingBalance" placeholder="مثلاً: رصيد الرص سيستم اليومي" oninput="calcOpening()">
     </div>
-</div>
-
-<!-- نافذة إدارة القسم والفولدرات الفرعية -->
-<div class="modal" id="dataModal">
-    <div class="modal-content">
-        <h3>
-            <span id="modalTitle">عنوان القسم</span>
-            <button class="btn-share" style="flex:none; padding:4px 8px; font-size:0.75rem;" onclick="shareCurrentFolder()">مشاركة الفولدر 📤</button>
-        </h3>
-        
-        <div class="form-group" style="margin-top: 10px;">
-            <label>اختر التصنيف أو الفولدر الفرعي:</label>
-            <select id="folderSelect" onchange="resetForm(); loadSavedData();"></select>
-        </div>
-
-        <div class="edit-mode-banner" id="editModeBanner">🖊️ أنت الآن بتعدل حركة موجودة بالفعل - مش بتضيف حركة جديدة. لو عايز تضيف حركة جديدة، دوس "إلغاء التعديل" الأول.</div>
-
-        <div class="form-group">
-            <label id="labelField1">اسم العامل / المقاول / السيارة / البند:</label>
-            <input type="text" id="inputField1" placeholder="اكتب الاسم هنا... (نفس الاسم تتجمع حركاته مع بعض)">
-        </div>
-
-        <div class="amount-row">
-            <div class="form-group">
-                <label>نوع الحركة:</label>
-                <select id="txType">
-                    <option value="credit">➕ له (مستحقات / أجر / إيراد)</option>
-                    <option value="debit">➖ عليه (سلفة / مصروف / خصم)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>المبلغ:</label>
-                <input type="number" id="txAmount" placeholder="0" step="any">
-            </div>
-        </div>
-
-        <div class="form-group" style="margin-top: 12px;">
-            <label id="labelField2">ملاحظات (اختياري):</label>
-            <textarea id="inputField2" rows="2" placeholder="مثال: يوم عمل الأحد، أو بترول عربية النقل..."></textarea>
-        </div>
-        
-        <input type="hidden" id="editIndex" value="-1">
-
-        <div class="btn-container">
-            <button class="btn-save" id="saveBtn" onclick="saveData()">حفظ الحركة</button>
-            <button class="btn-cancel-edit" id="cancelEditBtn" onclick="resetForm()">إلغاء التعديل ➕ حركة جديدة</button>
-            <button class="btn-close" onclick="closeForm()">إغلاق</button>
-        </div>
-
-        <div class="output-box">
-            <strong>البيانات والمسجلات في هذا الفولدر:</strong>
-            <div id="savedItems" style="margin-top: 8px;">لا توجد بيانات مسجلة.</div>
-        </div>
+    <div class="result-box" style="background: #ebf5fb; border-color: #aed6f1;">
+        <div class="result-item" style="color: #1b4f72;">شكائر الرصيد الموجودة بالمخبز: <span id="openingSacks">0</span> شيكارة <small>(والمتبقي <span id="openingLeftover">0</span> رغيف)</small></div>
     </div>
-</div>
 
-<!-- نافذة نتائج البحث العام -->
-<div class="modal" id="searchModal">
-    <div class="modal-content">
-        <h3>نتائج البحث العام</h3>
-        <div id="searchResults" style="margin-top: 10px; max-height: 60vh; overflow-y: auto;"></div>
-        <div class="btn-container" style="margin-top: 15px;">
-            <button class="btn-close" onclick="document.getElementById('searchModal').style.display='none'">إغلاق البحث</button>
-        </div>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+    <div class="form-group">
+        <label for="todaySales">مبيعات اليوم (الأرغفة المباعة):</label>
+        <input type="number" id="todaySales" placeholder="عدد الأرغفة اللي اتباعت" oninput="calcSales()">
+    </div>
+    
+    <div class="result-box">
+        <div class="result-item">الشكائر اللي اشتغلتها (المستحقة): <span id="salesSacks">0</span> شيكارة</div>
+        <div class="result-item">كسور الأرغفة الباقية من البيع: <span id="salesLeftover">0</span> رغيف</div>
+        <div class="result-item">الرصيد النهائي المتبقي بالمكينة: <span id="finalBalance">0</span> رغيف</div>
+    </div>
+
+    <button class="btn" onclick="saveDay()">حفظ يومية اليوم 💾</button>
+
+    <div class="history-section">
+        <h3>الأيام السابقة المحفوظة</h3>
+        <div id="historyList">لم يتم حفظ أيام بعد.</div>
     </div>
 </div>
 
 <script>
-    let currentModuleKey = '';
+    // تفعيل تاريخ اليوم تلقائياً
+    document.getElementById('workDate').valueAsDate = new Date();
+    loadHistory();
 
-    function openModule(title, subFolders) {
-        currentModuleKey = title;
-        document.getElementById('modalTitle').innerText = title;
-        
-        let select = document.getElementById('folderSelect');
-        select.innerHTML = subFolders.map(f => `<option value="${f}">${f}</option>`).join('');
-        
-        resetForm();
-        document.getElementById('dataModal').style.display = 'flex';
-        loadSavedData();
+    function calcOpening() {
+        let opening = parseFloat(document.getElementById('openingBalance').value) || 0;
+        let sacks = Math.floor(opening / 725);
+        let leftovers = opening % 725;
+        document.getElementById('openingSacks').innerText = sacks;
+        document.getElementById('openingLeftover').innerText = leftovers;
     }
 
-    function closeForm() {
-        document.getElementById('dataModal').style.display = 'none';
-        resetForm();
+    function calcSales() {
+        let opening = parseFloat(document.getElementById('openingBalance').value) || 0;
+        let sales = parseFloat(document.getElementById('todaySales').value) || 0;
+
+        let salesSacks = Math.floor(sales / 725);
+        let salesLeftovers = sales % 725;
+        let final = opening - sales;
+
+        document.getElementById('salesSacks').innerText = salesSacks;
+        document.getElementById('salesLeftover').innerText = salesLeftovers;
+        document.getElementById('finalBalance').innerText = final;
     }
 
-    function resetForm() {
-        document.getElementById('inputField1').value = '';
-        document.getElementById('inputField2').value = '';
-        document.getElementById('txType').value = 'credit';
-        document.getElementById('txAmount').value = '';
-        document.getElementById('editIndex').value = '-1';
-        document.getElementById('saveBtn').innerText = 'حفظ الحركة';
-        document.getElementById('editModeBanner').classList.remove('show');
-        document.getElementById('cancelEditBtn').classList.remove('show');
-        document.querySelector('.modal-content').classList.remove('editing');
-    }
+    function saveDay() {
+        let date = document.getElementById('workDate').value;
+        let opening = document.getElementById('openingBalance').value || 0;
+        let sales = document.getElementById('todaySales').value || 0;
+        let openingSacks = document.getElementById('openingSacks').innerText;
+        let salesSacks = document.getElementById('salesSacks').innerText;
+        let final = document.getElementById('finalBalance').innerText;
 
-    function getStorageKey() {
-        let folder = document.getElementById('folderSelect').value;
-        return 'erp_' + currentModuleKey + '_' + folder;
-    }
-
-    function formatNumber(num) {
-        return Number(num.toFixed(2)).toLocaleString('ar-EG');
-    }
-
-    /* ============================
-       كل حركة بتتسجل كصف مستقل (اسم + نوع له/عليه + مبلغ + ملاحظة + تاريخ)
-       وبعدين بيتم تجميع الحركات حسب الاسم تلقائيًا وحساب الرصيد الصافي
-       ============================ */
-    function saveData() {
-        const name = document.getElementById('inputField1').value.trim();
-        const note = document.getElementById('inputField2').value;
-        const type = document.getElementById('txType').value;
-        const amountRaw = document.getElementById('txAmount').value;
-        const amount = parseFloat(amountRaw);
-        let editIdx = parseInt(document.getElementById('editIndex').value);
-
-        if(!name) {
-            alert('يرجى إدخال الاسم (العامل / السيارة / البند)');
-            return;
-        }
-        if(amountRaw === '' || isNaN(amount)) {
-            alert('يرجى إدخال المبلغ بالأرقام');
+        if(!date) {
+            alert('برجاء تحديد التاريخ');
             return;
         }
 
-        let key = getStorageKey();
-        let records = JSON.parse(localStorage.getItem(key) || '[]');
+        let dayData = {
+            date: date,
+            opening: opening,
+            openingSacks: openingSacks,
+            sales: sales,
+            salesSacks: salesSacks,
+            final: final
+        };
 
-        if(editIdx === -1) {
-            records.push({ name, type, amount, note, date: new Date().toLocaleDateString('ar-EG') });
-        } else {
-            let old = records[editIdx];
-            let confirmMsg = `أنت بصدد استبدال الحركة القديمة (${old.type === 'credit' ? 'له' : 'عليه'} ${formatNumber(old.amount)}) بالبيانات الجديدة (${type === 'credit' ? 'له' : 'عليه'} ${formatNumber(amount)}).\n\nلو قصدك تضيف حركة جديدة بدل ما تعدل القديمة، دوس "إلغاء" وبعدين "إلغاء التعديل" في الفورم.\n\nهل تريد الاستمرار في الاستبدال؟`;
-            if(!confirm(confirmMsg)) {
-                return;
-            }
-            records[editIdx].name = name;
-            records[editIdx].type = type;
-            records[editIdx].amount = amount;
-            records[editIdx].note = note;
-            records[editIdx].date = new Date().toLocaleDateString('ar-EG') + ' (معدل)';
-        }
+        let history = JSON.parse(localStorage.getItem('feren_history')) || [];
+        // إضافة اليوم الجديد في البداية
+        history.unshift(dayData);
+        localStorage.setItem('feren_history', JSON.stringify(history));
 
-        localStorage.setItem(key, JSON.stringify(records));
-        resetForm();
-        loadSavedData();
+        alert('تم حفظ يومية اليوم بنجاح!');
+        loadHistory();
     }
 
-    // تجميع الحركات حسب الاسم وحساب الرصيد لكل واحد
-    function groupRecords(records) {
-        let groups = {};
-        records.forEach((r, idx) => {
-            if(!groups[r.name]) groups[r.name] = { transactions: [], balance: 0 };
-            groups[r.name].transactions.push({ ...r, idx });
-            groups[r.name].balance += (r.type === 'credit' ? r.amount : -r.amount);
-        });
-        return groups;
-    }
-
-    function balanceClass(balance) {
-        if(balance > 0) return 'balance-positive';
-        if(balance < 0) return 'balance-negative';
-        return 'balance-zero';
-    }
-
-    function loadSavedData() {
-        let key = getStorageKey();
-        let records = JSON.parse(localStorage.getItem(key) || '[]');
-        let container = document.getElementById('savedItems');
+    function loadHistory() {
+        let history = JSON.parse(localStorage.getItem('feren_history')) || [];
+        let listDiv = document.getElementById('historyList');
         
-        if(records.length === 0) {
-            container.innerHTML = '<span style="color:#7f8c8d;">لا توجد بيانات مسجلة في هذا الفولدر.</span>';
+        if(history.length === 0) {
+            listDiv.innerHTML = 'لم يتم حفظ أيام بعد.';
             return;
         }
 
-        let groups = groupRecords(records);
-        let grandTotal = 0;
-
-        let html = Object.keys(groups).map(name => {
-            let g = groups[name];
-            grandTotal += g.balance;
-            let txHtml = g.transactions.map(t => `
-                <div class="record-item">
-                    <div class="record-header">
-                        <span><span class="tx-type ${t.type === 'credit' ? 'tx-credit' : 'tx-debit'}">${t.type === 'credit' ? 'له' : 'عليه'}</span> ${formatNumber(t.amount)}</span>
-                        <small style="color:#888;">${t.date}</small>
-                    </div>
-                    ${t.note ? `<div style="margin-top:3px; color:#555; font-size:0.8rem;">${t.note}</div>` : ''}
-                    <div class="record-actions">
-                        <button class="btn-edit" onclick="editRecord(${t.idx})">تعديل</button>
-                        <button class="btn-delete" onclick="deleteRecord(${t.idx})">حذف</button>
-                        <button class="btn-share" onclick="shareSingleRecord(${t.idx})">مشاركة 📤</button>
-                    </div>
-                </div>
-            `).join('');
-
-            return `
-                <div class="entity-card">
-                    <div class="entity-header">
-                        <span class="entity-name">👤 ${name}</span>
-                        <span class="entity-balance ${balanceClass(g.balance)}">الرصيد: ${formatNumber(g.balance)}</span>
-                    </div>
-                    ${txHtml}
+        let html = '';
+        history.forEach(item => {
+            html += `
+                <div class="history-card">
+                    <b>التاريخ: ${item.date}</b><br>
+                    - الرصيد الافتتاحي: ${item.opening} رغيف (${item.openingSacks} شيكارة)<br>
+                    - مبيعات اليوم: ${item.sales} رغيف (${item.salesSacks} شيكارة دقيق هتنزل)<br>
+                    - الرصيد المتبقي: <b>${item.final} رغيف</b>
                 </div>
             `;
-        }).join('');
-
-        html += `<div class="folder-total-box">💰 إجمالي رصيد الفولدر: ${formatNumber(grandTotal)}</div>`;
-
-        container.innerHTML = html;
+        });
+        listDiv.innerHTML = html;
     }
+</script>
 
-    function editRecord(index) {
-        let key = getStorageKey();
-        let records = JSON.parse(localStorage.getItem(key) || '[]');
-        let item = records[index];
-
-        document.getElementById('inputField1').value = item.name;
-        document.getElementById('inputField2').value = item.note || '';
-        document.getElementById('txType').value = item.type;
-        document.getElementById('txAmount').value = item.amount;
-        document.getElementById('editIndex').value = index;
-        document.getElementById('saveBtn').innerText = 'تحديث الحركة';
-        document.getElementById('editModeBanner').classList.add('show');
-        document.getElementById('cancelEditBtn').classList.add('show');
-        document.querySelector('.modal-content').classList.add('editing');
-        document.getElementById('inputField1').scrollIntoView({behavior:'smooth', block:'center'});
-    }
-
-    function deleteRecord(index) {
-        if(confirm('هل أنت متأكد من حذف هذه الحركة؟')) {
-            let key = getStorageKey();
-            let records = JSON.parse(localStorage.getItem(key) || '[]');
-            records.splice(index, 1);
-            localStorage.setItem(key, JSON.stringify(records));
-            loadSavedData();
-            resetForm();
-        }
-    }
-
-    // 1. مشاركة حركة واحدة
-    function shareSingleRecord(index) {
-        let key = getStorageKey();
-        let records = JSON.parse(localStorage.getItem(key) || '[]');
-        let r = records[index];
-        let folder = document.getElementById('folderSelect').value;
-
-        let text = `📋 *تقرير من BedaiaERP*\n` +
-                   `📁 القسم: ${curre
+</body>
+</html>
