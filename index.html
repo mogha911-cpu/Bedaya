@@ -179,7 +179,7 @@
         let finalSacks = Math.floor(Math.abs(final) / 725);
         let finalLeftover = Math.abs(final) % 725;
         
-        // المعادلة الدقيقة للرغفان المطلوبة لتقفيل الشيكارة التالية (725 - الباقي)
+        // المعادلة المضبوطة: الرغفان الباقية + الكمية المطلوبة للوصول إلى 725
         let needed = finalLeftover === 0 ? 0 : (725 - finalLeftover);
 
         document.getElementById('salesSacks').innerText = salesSacks;
