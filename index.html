@@ -156,7 +156,12 @@
 
 <script>
     window.onload = function() {
-        document.getElementById('genDate').value = new Date().toISOString().split('T')[0];
+        let history = JSON.parse(localStorage.getItem('gen_history')) || [];
+        if(history.length === 0) {
+            document.getElementById('genDate').value = new Date().toISOString().split('T')[0];
+        } else {
+            prepareNextDayAuto(history);
+        }
         calcGeneral();
         loadGeneralHistory();
     };
@@ -245,8 +250,8 @@
     function saveGeneral() {
         let date = document.getElementById('genDate').value;
         let opening = document.getElementById('openingBalance').value;
-        let prevSales = document.getElementById('prevDaySales').value;
-        let sales = document.getElementById('todaySales').value;
+        let prevSales = document.getElementById('prevDaySales').value || 0;
+        let sales = document.getElementById('todaySales').value || 0;
 
         if(!date || !opening || !sales) {
             alert('برجاء إدخال التاريخ، الرصيد الافتتاحي ومبيعات اليوم.');
@@ -261,11 +266,36 @@
             alert('تم تحديث اليومية بنجاح! 🔄');
         } else {
             history.push({ date, opening, prevSales, sales });
-            alert('تم حفظ يومية اليوم بنجاح! 💾');
+            alert('تم حفظ يومية اليوم وترحيل الحساب لليوم التالي بنجاح! 💾');
         }
 
+        history.sort((a, b) => new Date(a.date) - new Date(b.date));
         localStorage.setItem('gen_history', JSON.stringify(history));
+
+        prepareNextDayAuto(history);
         loadGeneralHistory();
+        calcGeneral();
+    }
+
+    function prepareNextDayAuto(history) {
+        if(history.length === 0) return;
+        history.sort((a, b) => new Date(a.date) - new Date(b.date));
+        let lastRecord = history[history.length - 1];
+        let op = Number(lastRecord.opening) || 0;
+        let prv = Number(lastRecord.prevSales) || 0;
+        let sls = Number(lastRecord.sales) || 0;
+        let lastFinalClosing = (op - sls) + prv;
+
+        let nextDateObj = new Date(lastRecord.date);
+        if (isNaN(nextDateObj.getTime())) {
+            nextDateObj = new Date();
+        }
+        nextDateObj.setDate(nextDateObj.getDate() + 1);
+
+        document.getElementById('genDate').value = nextDateObj.toISOString().split('T')[0];
+        document.getElementById('openingBalance').value = lastFinalClosing;
+        document.getElementById('prevDaySales').value = prv;
+        document.getElementById('todaySales').value = '';
     }
 
     function loadGeneralHistory() {
@@ -276,13 +306,15 @@
             return;
         }
         let html = '';
-        history.forEach((i, index) => {
+        let displayHistory = [...history].reverse();
+        displayHistory.forEach((i) => {
+            let originalIndex = history.findIndex(item => item.date === i.date);
             let final = (Number(i.opening) - Number(i.sales)) + Number(i.prevSales);
             html += `<div class="history-card">
                 <div><b>${i.date}</b> | الختامي: <b>${final}</b></div>
                 <div>
                     <button type="button" class="btn-edit" onclick="editRecord('${i.date}', '${i.opening}', '${i.prevSales}', '${i.sales}')">تعديل</button>
-                    <button type="button" class="btn-delete" onclick="deleteRecord(${index})">حذف</button>
+                    <button type="button" class="btn-delete" onclick="deleteRecord(${originalIndex})">حذف</button>
                 </div>
             </div>`;
         });
@@ -299,10 +331,21 @@
     }
 
     function deleteRecord(index) {
+        if(!confirm('هل أنت متأكد من حذف هذا السجل؟')) return;
         let history = JSON.parse(localStorage.getItem('gen_history')) || [];
         history.splice(index, 1);
         localStorage.setItem('gen_history', JSON.stringify(history));
+
+        if(history.length > 0) {
+            prepareNextDayAuto(history);
+        } else {
+            document.getElementById('genDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('openingBalance').value = '';
+            document.getElementById('prevDaySales').value = '';
+            document.getElementById('todaySales').value = '';
+        }
         loadGeneralHistory();
+        calcGeneral();
     }
 
     function clearLocalStorageData() {
