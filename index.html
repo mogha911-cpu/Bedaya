@@ -1,372 +1,881 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة وجرد المخبز البلدي</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 15px; }
-        .container { max-width: 480px; margin: 0 auto; background: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; padding-bottom: 45px; }
-        h2 { text-align: center; color: #2c3e50; margin-bottom: 15px; }
-        .user-header-info { background: #eaf2f8; border: 2px solid #3498db; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; color: #1b4f72; font-size: 17px; font-weight: bold; }
-        .user-header-info span { color: #c0392b; direction: ltr; display: inline-block; }
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; }
-        .tab-btn { flex: 1; background: #bdc3c7; color: #fff; border: none; padding: 10px; border-radius: 5px; font-size: 14px; font-weight: bold; cursor: pointer; }
-        .tab-btn.active { background: #2c3e50; }
-        .section-content { display: none; }
-        .section-content.active { display: block; }
-        .section-title { background: #27ae60; color: white; padding: 8px; border-radius: 5px; font-size: 15px; margin-top: 15px; margin-bottom: 10px; text-align: center; }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #34495e; font-size: 14px; }
-        input { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #bdc3c7; border-radius: 5px; font-size: 16px; }
-        .result-box { margin-top: 15px; background: #e8f8f5; padding: 12px; border-radius: 5px; border: 1px solid #a3e4d7; }
-        .result-item { margin-bottom: 8px; font-size: 15px; color: #117a65; line-height: 1.5; }
-        .btn { background-color: #2980b9; color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 15px; }
-        .btn-print { background-color: #8e44ad; margin-top: 10px; }
-        .btn-edit { background-color: #f39c12; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; margin-left: 5px; }
-        .btn-delete { background-color: #c0392b; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; }
-        .history-section { margin-top: 20px; border-top: 2px solid #ecf0f1; padding-top: 10px; }
-        .history-card { background: #fdfefe; border: 1px solid #d5dbdb; padding: 10px; border-radius: 5px; margin-bottom: 8px; font-size: 13px; color: #333; display: flex; justify-content: space-between; align-items: center; }
-        .footer-credit { text-align: center; margin-top: 20px; padding-top: 10px; border-top: 1px dashed #bdc3c7; font-size: 13px; color: #7f8c8d; font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>موغا - إدارة وحسابات المخبز</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#20303D;
+  --ink-soft:#4C5D6B;
+  --bg:#F1F3F5;
+  --surface:#FFFFFF;
+  --border:#E2E6EA;
+  --accent:#B8862E;
+  --accent-dark:#8C6420;
+  --accent-tint:#FBF3E4;
+  --success:#1E8A5F;
+  --success-tint:#E7F5EF;
+  --danger:#B3452B;
+  --danger-tint:#FBEAE5;
+  --navy:#20303D;
+}
+*{box-sizing:border-box;font-family:'Cairo',Tahoma,sans-serif}
+body{margin:0;padding:16px;background:var(--bg);color:var(--ink)}
+.container{max-width:960px;margin:auto;background:var(--surface);padding:0 0 40px;border-radius:16px;box-shadow:0 1px 2px rgba(32,48,61,.06),0 12px 28px rgba(32,48,61,.08);overflow:hidden}
+
+.topbar{background:var(--navy);color:#fff;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar-title{font-size:18px;font-weight:800;letter-spacing:.2px}
+.topbar-title span{display:block;font-size:12px;font-weight:500;color:#B7C2CB;margin-top:2px}
+.gear-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;padding:9px 14px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer}
+.gear-btn:hover{background:rgba(255,255,255,.16)}
+.gear-icon{font-size:16px;line-height:1}
+
+.user-header-info{background:var(--accent-tint);border:1px solid #EFD9AE;padding:10px 16px;text-align:center;color:var(--accent-dark);font-size:13px;font-weight:600}
+.user-header-info span{color:var(--ink);direction:ltr;display:inline-block;font-weight:700}
+
+.content-pad{padding:18px 20px 0}
+
+.result-box{margin-top:14px;background:var(--success-tint);padding:14px 16px;border-radius:10px;border:1px solid #CBE9DB}
+.result-item{margin-bottom:8px;font-size:14px;color:#146245;line-height:1.7}
+.result-item:last-child{margin-bottom:0}
+
+.nav-tabs{display:flex;gap:6px;margin:18px 0 20px;padding-bottom:4px;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab-btn{white-space:nowrap;background:transparent;color:var(--ink-soft);border:0;padding:10px 16px;border-radius:999px;font-size:13.5px;font-weight:700;cursor:pointer}
+.tab-btn:hover{background:var(--bg)}
+.tab-btn.active{background:var(--ink);color:#fff}
+
+.section-content{display:none}.section-content.active{display:block}
+.section-title{color:var(--ink);font-size:16px;font-weight:800;margin:4px 0 16px;padding-bottom:10px;border-bottom:2px solid var(--accent-tint)}
+
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.form-group{margin-bottom:6px}
+label{display:block;margin-bottom:6px;font-weight:700;font-size:13px;color:var(--ink-soft)}
+input,select{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:#fff;color:var(--ink);font-family:'Cairo',Tahoma,sans-serif}
+input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tint)}
+.locked-field{background:#F6F7F8!important;color:var(--ink-soft);font-weight:700}
+
+.btn{background:var(--accent);color:#fff;border:0;padding:13px;width:100%;border-radius:9px;font-size:15px;cursor:pointer;font-weight:700;margin-top:10px;transition:filter .12s}
+.btn:hover{filter:brightness(0.94)}
+.btn-green{background:var(--success)}
+.btn-purple{background:var(--ink)}
+.btn-red{background:var(--danger)}
+.btn-orange{background:var(--accent-dark)}
+.btn-small{width:auto;padding:7px 12px;font-size:12.5px;margin:2px;border-radius:7px}
+
+.history-section{margin-top:24px;border-top:1px solid var(--border);padding-top:16px}
+.history-section h3{font-size:14.5px;color:var(--ink);margin:0 0 12px}
+.history-card{background:#fff;border:1px solid var(--border);padding:13px 14px;border-radius:9px;margin-bottom:8px;font-size:13px}
+.history-main{display:flex;justify-content:space-between;align-items:center;gap:10px}
+
+.table-box{overflow-x:auto;border:1px solid var(--border);border-radius:9px}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:center;font-size:12.5px}
+th{background:var(--ink);color:#fff;font-weight:700}
+td{color:var(--ink-soft)}
+tr:last-child td{border-bottom:0}
+
+.note{background:var(--accent-tint);padding:12px 14px;border-radius:9px;font-size:13px;margin-bottom:15px;color:var(--accent-dark);line-height:1.7;border:1px solid #EFD9AE}
+.warning-note{background:var(--accent-tint);border:1px solid #EFD9AE;color:var(--accent-dark)}
+
+.modal{display:none;position:fixed;inset:0;background:rgba(32,48,61,.55);z-index:9999;overflow-y:auto;padding:20px}
+.modal-content{background:#fff;max-width:850px;margin:30px auto;padding:22px;border-radius:14px}
+.modal-content h3{margin-top:0;font-size:17px;color:var(--ink)}
+
+.footer-credit{text-align:center;margin:24px 20px 0;padding-top:14px;border-top:1px dashed var(--border);font-size:12.5px;color:var(--ink-soft);font-weight:600}
+
+@media(max-width:600px){
+  body{padding:0}
+  .container{border-radius:0;box-shadow:none}
+  .content-pad{padding:14px 14px 0}
+  .form-grid{grid-template-columns:1fr}
+  .history-main{flex-direction:column;align-items:stretch}
+  .topbar{padding:14px 16px}
+}
+</style>
 </head>
 <body>
-
 <div class="container">
-    <div class="user-header-info">
-        إنشاء وتصميم: أحمد السيد عبد المغني<br>
-        📞 <span>01226606932</span>
-    </div>
+<div class="topbar">
+<div class="topbar-title">🍞 موغا<span>إدارة وحسابات المخبز</span></div>
+<button class="gear-btn" id="openSettingsBtn"><span class="gear-icon">⚙️</span> إعدادات المخبز</button>
+</div>
+<div class="content-pad">
+<div class="user-header-info">إنشاء وتصميم: أحمد السيد عبد المغني<br>📞 <span>01226606932</span></div>
 
-    <h2>حسابات وجرد المخبز</h2>
+<div class="result-box" id="quickSummaryBox" style="margin:14px 0;">لسه معندكش أي يومية متسجلة.</div>
 
-    <div class="nav-tabs">
-        <button type="button" class="tab-btn active" onclick="switchTab('general')" id="btnGeneral">جرد الماكينة واليومية</button>
-        <button type="button" class="tab-btn" onclick="switchTab('inspection')" id="btnInspection">🛡️ جرد التفتيش اللحظي</button>
-    </div>
-
-    <!-- القسم الأول: جرد الماكينة واليومية -->
-    <div id="generalSection" class="section-content active">
-        <div class="form-group">
-            <label for="genDate">التاريخ:</label>
-            <input type="date" id="genDate">
-        </div>
-        <div class="form-group">
-            <label for="openingBalance">الرصيد الافتتاحي للنهارده (رصيد إغلاق إمبارح):</label>
-            <input type="number" id="openingBalance" value="46400" oninput="calcGeneral()">
-        </div>
-        <div class="form-group">
-            <label for="prevDaySales">مبيعات اليوم السابق / الاستعاضة النازلة النهاردة:</label>
-            <input type="number" id="prevDaySales" value="13775" oninput="calcGeneral()">
-        </div>
-        <div class="form-group">
-            <label for="todaySales">مبيعات اليوم / المسحوب (الأرغفة المباعة):</label>
-            <input type="number" id="todaySales" value="15225" oninput="calcGeneral()">
-        </div>
-
-        <div class="result-box">
-            <div class="result-item">• الرصيد المتبقي بعد خصم مبيعات النهاردة: <br><span id="genRemainingBefore" style="font-weight:bold;">0</span></div>
-            <hr style="border: 0; border-top: 1px dashed #a3e4d7; margin: 8px 0;">
-            <div class="result-item">• <b>رصيد الماكينة الختامي (المرَحّل لبكرة):</b> <br><span id="genFinalNextOpening" style="font-size: 16px; color: #c0392b; font-weight: bold;">0</span></div>
-        </div>
-
-        <button type="button" class="btn" onclick="saveGeneral()">حفظ يومية اليوم وترحيل الحساب 💾</button>
-        <button type="button" class="btn btn-print" onclick="openMonthlyReport()">🖨️ طباعة بيان الشهر الكامل</button>
-
-        <div class="history-section">
-            <h3>السجلات المحفوظة</h3>
-            <div id="genHistoryList">لا توجد سجلات.</div>
-        </div>
-
-        <button type="button" onclick="clearLocalStorageData()" style="background:#e74c3c; color:#fff; border:none; padding:8px; width:100%; border-radius:5px; margin-top:15px; cursor:pointer; font-size:13px;">⚠️ مسح البيانات المخزنة والبدء من جديد</button>
-        <div class="footer-credit">إنشاء وتصميم: أحمد السيد عبد المغني</div>
-    </div>
-
-    <!-- القسم الثاني: جرد التفتيش اللحظي أثناء الشغل -->
-    <div id="inspectionSection" class="section-content">
-        <div class="section-title">إجابة التفتيش المفاجئ (أثناء العمل) 🚨</div>
-        
-        <div class="form-group">
-            <label for="inspOpening">الرصيد الافتتاحي المتاح حالياً:</label>
-            <input type="number" id="inspOpening" readonly style="background:#eee; color:#555;">
-        </div>
-        <div class="form-group">
-            <label for="inspClosedSacks">عدد الشكاير المغلقة (ماتفتحتش):</label>
-            <input type="number" id="inspClosedSacks" value="0" oninput="calcInspection()">
-        </div>
-        <div class="form-group">
-            <label for="inspMachineSales">إجمالي مبيعات الماكينة لحد اللحظة:</label>
-            <input type="number" id="inspMachineSales" value="0" oninput="calcInspection()">
-        </div>
-        <div class="form-group">
-            <label for="inspWaitingCount">عدد الأرغفة اللي أصحابها مستنيينها (بتتجهز):</label>
-            <input type="number" id="inspWaitingCount" value="0" oninput="calcInspection()">
-        </div>
-        <div class="form-group">
-            <label for="inspBaked">الأرغفة المخبوزة الجاهزة:</label>
-            <input type="number" id="inspBaked" value="0" oninput="calcInspection()">
-        </div>
-        <div class="form-group">
-            <label for="inspTraysCount">عدد الطوايل (كل طبلية = 24 رغيف):</label>
-            <input type="number" id="inspTraysCount" value="0" oninput="calcInspection()">
-        </div>
-
-        <div class="result-box">
-            <div class="result-item">📦 إجمالي الشكاير حسب الافتتاحي: <span id="inspTotalSacksInfo">0</span></div>
-            <hr style="border: 0; border-top: 1px dashed #a3e4d7; margin: 8px 0;">
-            <div class="result-item" style="font-size: 16px; font-weight: bold; color: #2c3e50;">
-                🌾 عدد الشكاير المفروض تكون معجونة الآن:<br>
-                <span id="inspSacksToKnead" style="color: #8e44ad; font-size: 18px;">0</span>
-            </div>
-            <hr style="border: 0; border-top: 1px dashed #a3e4d7; margin: 8px 0;">
-            <div class="result-item">🚶 المستلم فعلاً = <span id="inspDeliveredCalc">0</span> رغيف</div>
-            <div class="result-item">🍞 الطوايل = <span id="inspTraysLoaves">0</span> رغيف</div>
-            <div class="result-item" style="font-size: 16px;">
-                ⚖️ <b>المفروض يكون موجود في الحلة/الخلطة:</b><br>
-                <span id="inspMixerExpected" style="font-size: 18px; color: #117a65; font-weight: bold;">0</span>
-            </div>
-            <div id="inspStatus" style="margin-top: 8px; font-weight: bold; font-size: 14px;"></div>
-        </div>
-        <div class="footer-credit" style="margin-top: 30px;">إنشاء وتصميم: أحمد السيد عبد المغني</div>
-    </div>
+<div class="nav-tabs">
+<button class="tab-btn active" data-tab="general">🍞 اليومية</button>
+<button class="tab-btn" data-tab="inspection">🛡️ التفتيش</button>
+<button class="tab-btn" data-tab="account">💰 الحساب والمديونيات</button>
+<button class="tab-btn" data-tab="flour">🌾 حركة الدقيق</button>
 </div>
 
-<!-- نافذة عرض تقرير الشهر للطباعة -->
-<div id="printModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; overflow-y:auto; padding:20px; box-sizing:border-box;">
-    <div style="background:#fff; max-width:750px; margin:30px auto; padding:20px; border-radius:8px; position:relative;">
-        <button type="button" onclick="closeMonthlyReport()" style="position:absolute; top:10px; left:10px; background:#c0392b; color:#fff; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">إغلاق ❌</button>
-        <div id="printableContent">
-            <h3 style="text-align:center; color:#2c3e50;">بيان حركة المخبز الشهري</h3>
-            <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:center;">
-                <thead>
-                    <tr style="background:#2c3e50; color:#fff;">
-                        <th style="padding:6px; border:1px solid #ddd;">التاريخ</th>
-                        <th style="padding:6px; border:1px solid #ddd;">الافتتاحي</th>
-                        <th style="padding:6px; border:1px solid #ddd;">مبيعات النهاردة</th>
-                        <th style="padding:6px; border:1px solid #ddd;">استعاضة</th>
-                        <th style="padding:6px; border:1px solid #ddd;">الختامي</th>
-                    </tr>
-                </thead>
-                <tbody id="reportTableBody"></tbody>
-            </table>
-        </div>
-        <button type="button" onclick="window.print()" class="btn" style="margin-top:20px; background:#27ae60;">🖨️ طباعة البيان الآن</button>
-    </div>
+<!-- اليومية -->
+<div id="generalSection" class="section-content active">
+<div class="section-title">جرد الماكينة واليومية (مع الحساب التلقائي للمستحقات) 🍞</div>
+<div class="form-grid">
+<div class="form-group"><label>التاريخ</label><input type="date" id="genDate"></div>
+<div class="form-group"><label>الرصيد الافتتاحي (تلقائي)</label><input type="number" id="openingBalance" class="locked-field" value="0" step="any" readonly></div>
+<div class="form-group"><label>استعاضة اليوم السابق (تلقائي)</label><input type="number" id="prevDaySales" class="locked-field" value="0" step="any" readonly></div>
+<div class="form-group"><label>مبيعات اليوم</label><input type="number" id="todaySales" value="0" step="any"></div>
 </div>
+<div class="result-box">
+<div class="result-item">• الرصيد بعد خصم مبيعات اليوم فقط:<br><span id="genRemainingBefore">0</span></div>
+<hr>
+<div class="result-item">• <b>رصيد الماكينة الختامي (هو اللي هيترحل رصيد افتتاحي لبكرة — شامل استعاضة أمس مقرّبة لأقرب شيكارة):</b><br><span id="genFinalNextOpening" style="font-size:18px;color:#c0392b;font-weight:bold">0</span></div>
+<hr>
+<div class="result-item">• <b>المستحق المالي لليوم (تلقائي حسب قرار الوزير):</b><br><span id="genDailyDue" style="font-size:17px;font-weight:bold">0</span></div>
+</div>
+<button class="btn btn-green" id="saveGeneralBtn">💾 حفظ اليومية وترحيل الحساب تلقائياً</button>
+<button class="btn btn-purple" id="openReportBtn" style="margin-top:8px;">🖨️ طباعة بيان الشهر</button>
+<div class="history-section"><h3>السجلات المحفوظة</h3><div id="genHistoryList">لا توجد سجلات.</div></div>
+
+<div class="result-box" style="margin-top:20px;">
+<div class="section-title" style="margin-top:0;">💾 نسخة احتياطية</div>
+<button class="btn btn-purple" id="exportBackupBtn">⬇️ تصدير نسخة احتياطية</button>
+<label class="btn btn-purple" for="importBackupInput" style="display:inline-block;margin-inline-start:6px;">⬆️ استرجاع من نسخة</label>
+<input type="file" id="importBackupInput" accept="application/json" style="display:none;">
+</div>
+</div>
+
+<!-- التفتيش -->
+<div id="inspectionSection" class="section-content">
+<div class="section-title">جرد التفتيش اللحظي 🚨</div>
+<div class="form-grid">
+<div class="form-group"><label>الرصيد الافتتاحي المتاح</label><input type="number" id="inspOpening" class="locked-field" readonly></div>
+<div class="form-group"><label>عدد الشكاير المغلقة</label><input type="number" id="inspClosedSacks" value="0" step="any"></div>
+<div class="form-group"><label>إجمالي مبيعات الماكينة</label><input type="number" id="inspMachineSales" value="0" step="any"></div>
+<div class="form-group"><label>عدد الأرغفة المنتظرة</label><input type="number" id="inspWaitingCount" value="0" step="any"></div>
+<div class="form-group"><label>الأرغفة المخبوزة</label><input type="number" id="inspBaked" value="0" step="any"></div>
+<div class="form-group"><label>عدد الطوايل (الطبلية = 24 رغيف)</label><input type="number" id="inspTraysCount" value="0" step="any"></div>
+</div>
+<div class="result-box">
+<div class="result-item">📦 إجمالي الشكاير: <span id="inspTotalSacksInfo">0</span></div><hr>
+<div class="result-item">🌾 الشكاير المفروض تكون معجونة:<br><span id="inspSacksToKnead">0</span></div><hr>
+<div class="result-item">🚶 المستلم فعلاً: <span id="inspDeliveredCalc">0</span> رغيف</div>
+<div class="result-item">🍞 الطوايل: <span id="inspTraysLoaves">0</span> رغيف</div>
+<div class="result-item">⚖️ المفروض في الحلة:<br><span id="inspMixerExpected">0</span></div>
+<div id="inspStatus" style="margin-top:8px; font-weight:bold;"></div>
+</div>
+</div>
+
+<!-- الحساب -->
+<div id="accountSection" class="section-content">
+<div class="section-title">المستحقات والمديونيات مطابقة للقرار الوزاري 💰</div>
+<div class="form-grid">
+<div class="form-group"><label>من تاريخ</label><input type="date" id="accountFrom"></div>
+<div class="form-group"><label>إلى تاريخ</label><input type="date" id="accountTo"></div>
+</div>
+<button class="btn btn-green" id="calcAccountBtn">🔄 تحديث الحسابات</button>
+<div id="accountResult" class="result-box" style="margin-top:15px;">اختر الفترة واضغط تحديث.</div>
+<div class="history-section"><h3>تفاصيل حساب المخبز</h3><div class="table-box"><table><thead><tr><th>التاريخ</th><th>الرصيد الافتتاحي</th><th>الرصيد الختامي</th><th>عدد الشكاير المستهلكة</th><th>مستحق لي / مديونية عليّ</th></tr></thead><tbody id="accountTable"></tbody></table></div></div>
+</div>
+
+<!-- حركة الدقيق -->
+<div id="flourSection" class="section-content">
+<div class="section-title">حركة الدقيق 🌾 (تلقائي بالكامل حسب المبيعات والاستعاضة)</div>
+<p style="font-size:13px;color:#7f8c8d;">عمود "توردت" مقرّب لأقرب شيكارة كاملة: أي كسر أقل من 400 رغيف يتجاهل، و400 رغيف فأكتر يُحسب شيكارة كاملة. باقي الأرقام (الرصيد الافتتاحي/الختامي والاستهلاك) دقيقة من غير تقريب.</p>
+<div class="history-section"><div class="table-box"><table><thead><tr><th>التاريخ</th><th>الرصيد الافتتاحي (شكاير)</th><th>توردت (شكاير)</th><th>المستهلك (شكاير)</th><th>الرصيد الختامي (شكاير)</th></tr></thead><tbody id="flourMoveTable"></tbody></table></div></div>
+</div>
+
+<div class="footer-credit">إنشاء وتصميم: أحمد السيد عبد المغني</div>
+</div>
+
+<!-- نافذة الإعدادات -->
+<div id="settingsModal" class="modal"><div class="modal-content">
+<h3>⚙️ إعدادات المخبز الثابتة</h3>
+<div class="note warning-note">اختر نوع الخبز والوقود الأساسي لمخبزك لتطبيق معادلات القرار الوزاري تلقائياً.</div>
+<div class="form-grid">
+<div class="form-group"><label>نوع الخبز</label><select id="fixedBread"><option value="">-- اختر --</option><option value="mawy">ماوي / طري</option><option value="maldan">ملدن</option><option value="magar">مجر</option></select></div>
+<div class="form-group"><label>نوع الوقود</label><select id="fixedFuel"><option value="">-- اختر --</option><option value="gas">غاز طبيعي</option><option value="diesel">سولار</option></select></div>
+<div class="form-group"><label>الرصيد الافتتاحي الأول (يُستخدم في أول يومية بس)</label><input type="number" id="fixedInitialOpening" step="any" value="0"></div>
+</div>
+<button class="btn btn-green" id="saveSettingsBtn">💾 حفظ الإعدادات</button>
+
+<div class="history-section">
+<h3>⚙️ قيم الحساب (قابلة للتعديل)</h3>
+<p style="font-size:13px;color:#7f8c8d;">أي تعديل هنا بيتطبق تلقائي على كل الحسابات فورًا. لو أضفت تعريفة جديدة بتاريخ سريان، القديمة بتفضل زي ما هي وتتطبق تلقائي على السجلات اللي قبل التاريخ الجديد.</p>
+
+<div class="table-box"><table><thead><tr><th>تاريخ السريان</th><th id="tariffRateColHeader">القيمة (قرش لكل رغيف)</th><th>حذف</th></tr></thead><tbody id="tariffTable"></tbody></table></div>
+<button class="btn btn-green" id="addTariffPeriodBtn" style="margin-top:8px;">➕ إضافة فترة تعريفة جديدة</button>
+
+<div class="form-grid" style="margin-top:20px;">
+<div class="form-group"><label>سعر شيكارة الدقيق (جنيه)</label><input type="number" id="settingFlourPrice" step="any"></div>
+<div class="form-group"><label>إنتاجية الشيكارة (رغيف)</label><input type="number" id="settingSackOutput" step="any"></div>
+</div>
+</div>
+
+<button class="btn btn-red" id="closeSettingsBtn" style="margin-top:8px;">إغلاق</button>
+</div></div>
+
+<!-- نافذة التقرير -->
+<div id="printModal" class="modal"><div class="modal-content">
+<button id="closeReportBtn" class="btn btn-red">إغلاق ❌</button>
+<h3 style="text-align:center;">بيان حركة المخبز الشهرية</h3>
+<div class="table-box"><table><thead><tr><th>التاريخ</th><th>الافتتاحي</th><th>المبيعات</th><th>الاستعاضة</th><th>الختامي</th></tr></thead><tbody id="reportTableBody"></tbody></table></div>
+<button id="printPageBtn" class="btn btn-green" style="margin-top:15px;">🖨️ طباعة البيان</button>
+</div></div>
+
+<div id="confirmDeleteModal" class="modal"><div class="modal-content" style="max-width:400px;text-align:center;">
+<p style="font-size:16px;margin-bottom:20px;">هل أنت متأكد من حذف اليومية؟</p>
+<button id="confirmDeleteYesBtn" class="btn btn-red">نعم، احذف</button>
+<button id="confirmDeleteNoBtn" class="btn" style="background:#7f8c8d;">إلغاء</button>
+</div></div>
 
 <script>
-    window.onload = function() {
-        let history = JSON.parse(localStorage.getItem('gen_history')) || [];
-        if(history.length === 0) {
-            document.getElementById('genDate').value = new Date().toISOString().split('T')[0];
-        } else {
-            prepareNextDayAuto(history);
+const db = {
+    history: JSON.parse(localStorage.getItem("mogha_history")) || [],
+    settings: JSON.parse(localStorage.getItem("mogha_settings")) || {}
+};
+
+let pendingDeleteIndex = null;
+
+const $ = id => document.getElementById(id);
+const num = v => parseFloat(v) || 0;
+const todayStr = () => new Date().toISOString().split('T')[0];
+
+function fuelName(v){ return v === "gas" ? "غاز طبيعي" : (v === "diesel" ? "سولار" : "غير محدد"); }
+function breadName(v){ return v === "mawy" ? "ماوي / طري" : (v === "maldan" ? "ملدن" : (v === "magar" ? "مجر" : "غير محدد")); }
+
+// جدول قيم القرار الوزاري (صافي ما تسدده الهيئة بالقرش لكل رغيف) - قابل للتعديل من تبويب المدخلات
+const DEFAULT_TARIFF_PERIODS = [
+    { date: "1900-01-01", diesel_mawy: 17.36, diesel_maldan: 22.23, diesel_magar: 0, gas_mawy: -0.52, gas_maldan: -0.6, gas_magar: 0.08 },
+    { date: "2026-08-18", diesel_mawy: 18.86, diesel_maldan: 23.83, diesel_magar: 17.78, gas_mawy: 1.28, gas_maldan: 1.35, gas_magar: 0.03 }
+];
+
+function saveSettings(){
+    localStorage.setItem("mogha_settings", JSON.stringify(db.settings));
+}
+
+function ensureSettingsDefaults(){
+    if(!Array.isArray(db.settings.tariffPeriods) || db.settings.tariffPeriods.length === 0){
+        db.settings.tariffPeriods = JSON.parse(JSON.stringify(DEFAULT_TARIFF_PERIODS));
+    }
+    if(db.settings.flourPricePerSack === undefined) db.settings.flourPricePerSack = 966;
+    if(db.settings.sackOutput === undefined) db.settings.sackOutput = 725;
+    saveSettings();
+}
+
+function getMinistryPiasterPerLoaf(fuel, bread, date){
+    let periods = (Array.isArray(db.settings.tariffPeriods) && db.settings.tariffPeriods.length) ? db.settings.tariffPeriods : DEFAULT_TARIFF_PERIODS;
+    let sorted = periods.slice().sort((a, b) => a.date.localeCompare(b.date));
+    let applicable = sorted[0];
+    for(let p of sorted){
+        if(!date || p.date <= date) applicable = p; else break;
+    }
+    let key = fuel + "_" + bread;
+    return num(applicable[key]);
+}
+
+// تكلفة الدقيق التقديرية: كل شيكارة = إنتاجية معينة من الرغيف (قابلة للتعديل)، بسعر شيكارة قابل للتعديل
+function estimateFlourCost(loaves){
+    let output = getSackOutput();
+    let price = (db.settings.flourPricePerSack !== undefined) ? db.settings.flourPricePerSack : 966;
+    return (num(loaves) / output) * price;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    ensureSettingsDefaults();
+    checkSettingsOnStart();
+    if(db.history.length === 0 && $('genDate')) {
+        $('genDate').value = todayStr();
+        if($('openingBalance')) $('openingBalance').value = (db.settings.initialOpeningBalance !== undefined) ? db.settings.initialOpeningBalance : 0;
+    } else {
+        prepareNextDayAuto();
+    }
+    initEvents();
+    renderAll();
+});
+
+function checkSettingsOnStart(){
+    if(!db.settings.bread || !db.settings.fuel){
+        openSettingsModal();
+    } else {
+        updateSettingsDisplay();
+    }
+}
+
+function updateSettingsDisplay(){
+}
+
+function openSettingsModal(){
+    if($('fixedBread')) $('fixedBread').value = db.settings.bread || "";
+    if($('fixedFuel')) $('fixedFuel').value = db.settings.fuel || "";
+    if($('fixedInitialOpening')) $('fixedInitialOpening').value = (db.settings.initialOpeningBalance !== undefined) ? db.settings.initialOpeningBalance : 0;
+    renderTariffInputs();
+    if($('settingsModal')) $('settingsModal').style.display = 'block';
+}
+
+function closeSettingsModal(){
+    if($('settingsModal')) $('settingsModal').style.display = 'none';
+}
+
+function initEvents(){
+    // تفعيل التبويبات بنجاح تام
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            let targetTab = this.getAttribute("data-tab");
+            switchTab(targetTab);
+        });
+    });
+
+    ['openingBalance', 'prevDaySales', 'todaySales', 'genDate'].forEach(id => {
+        let el = $(id);
+        if(el) el.addEventListener('input', calcGeneral);
+    });
+
+    ['inspClosedSacks', 'inspMachineSales', 'inspWaitingCount', 'inspBaked', 'inspTraysCount'].forEach(id => {
+        let el = $(id);
+        if(el) el.addEventListener('input', calcInspection);
+    });
+
+    if($('openSettingsBtn')) $('openSettingsBtn').addEventListener('click', openSettingsModal);
+    if($('saveSettingsBtn')) $('saveSettingsBtn').addEventListener('click', function(){
+        let b = $('fixedBread').value;
+        let f = $('fixedFuel').value;
+        if(!b || !f){ alert("برجاء اختيار نوع الخبز والوقود"); return; }
+        db.settings.bread = b;
+        db.settings.fuel = f;
+        db.settings.initialOpeningBalance = num($('fixedInitialOpening') ? $('fixedInitialOpening').value : 0);
+        saveSettings();
+        updateSettingsDisplay();
+        if(db.history.length === 0 && $('openingBalance')){
+            $('openingBalance').value = db.settings.initialOpeningBalance;
         }
+        closeSettingsModal();
         calcGeneral();
-        loadGeneralHistory();
+        renderAll();
+    });
+    if($('closeSettingsBtn')) $('closeSettingsBtn').addEventListener('click', closeSettingsModal);
+
+    if($('saveGeneralBtn')) $('saveGeneralBtn').addEventListener('click', saveGeneral);
+    if($('openReportBtn')) $('openReportBtn').addEventListener('click', openMonthlyReport);
+    if($('closeReportBtn')) $('closeReportBtn').addEventListener('click', closeMonthlyReport);
+    if($('printPageBtn')) $('printPageBtn').addEventListener('click', () => window.print());
+    if($('calcAccountBtn')) $('calcAccountBtn').addEventListener('click', calculateAccount);
+    if($('confirmDeleteYesBtn')) $('confirmDeleteYesBtn').addEventListener('click', confirmDeleteYes);
+    if($('confirmDeleteNoBtn')) $('confirmDeleteNoBtn').addEventListener('click', confirmDeleteNo);
+    if($('exportBackupBtn')) $('exportBackupBtn').addEventListener('click', exportBackup);
+    if($('importBackupInput')) $('importBackupInput').addEventListener('change', function(e){
+        if(e.target.files && e.target.files[0]) importBackupFromFile(e.target.files[0]);
+    });
+
+    if($('addTariffPeriodBtn')) $('addTariffPeriodBtn').addEventListener('click', function(){
+        let periods = readTariffInputsFromTable();
+        periods.push({ date: todayStr(), diesel_mawy: 0, diesel_maldan: 0, diesel_magar: 0, gas_mawy: 0, gas_maldan: 0, gas_magar: 0 });
+        db.settings.tariffPeriods = periods;
+        saveSettings();
+        renderTariffInputs();
+    });
+
+    if($('settingFlourPrice')) $('settingFlourPrice').addEventListener('change', function(){
+        db.settings.flourPricePerSack = num($('settingFlourPrice').value);
+        saveSettings();
+        calculateAccount();
+        renderFlourMovement();
+        renderQuickSummary();
+    });
+    if($('settingSackOutput')) $('settingSackOutput').addEventListener('change', function(){
+        db.settings.sackOutput = num($('settingSackOutput').value) || 725;
+        saveSettings();
+        calculateAccount();
+        renderFlourMovement();
+        renderQuickSummary();
+    });
+}
+
+function saveAll(){
+    localStorage.setItem("mogha_history", JSON.stringify(db.history));
+}
+
+function exportBackup(){
+    let payload = { history: db.history, settings: db.settings, exportedAt: new Date().toISOString() };
+    let blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement('a');
+    a.href = url;
+    a.download = "mogha-backup-" + todayStr() + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function importBackupFromFile(file){
+    let reader = new FileReader();
+    reader.onload = function(){
+        try{
+            let parsed = JSON.parse(reader.result);
+            if(!parsed || !Array.isArray(parsed.history)){
+                alert("⚠️ ملف النسخة الاحتياطية غير صالح");
+                return;
+            }
+            db.history = parsed.history;
+            db.settings = parsed.settings || {};
+            ensureSettingsDefaults();
+            saveAll();
+            saveSettings();
+            updateSettingsDisplay();
+            renderAll();
+            calculateAccount();
+            renderTariffInputs();
+            alert("✅ تم استرجاع النسخة الاحتياطية بنجاح");
+        } catch(err){
+            alert("⚠️ حصل خطأ أثناء قراءة الملف: " + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+function switchTab(tab){
+    document.querySelectorAll(".section-content").forEach(s => s.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+
+    let mapSec = { 
+        general: "generalSection", 
+        inspection: "inspectionSection", 
+        account: "accountSection",
+        flour: "flourSection"
     };
 
-    function switchTab(tab) {
-        document.getElementById('generalSection').classList.remove('active');
-        document.getElementById('inspectionSection').classList.remove('active');
-        document.getElementById('btnGeneral').classList.remove('active');
-        document.getElementById('btnInspection').classList.remove('active');
+    document.querySelectorAll(".tab-btn").forEach(b => {
+        if(b.getAttribute("data-tab") === tab) b.classList.add("active");
+    });
+    if($(mapSec[tab])) $(mapSec[tab]).classList.add("active");
 
-        if(tab === 'general') {
-            document.getElementById('generalSection').classList.add('active');
-            document.getElementById('btnGeneral').classList.add('active');
-        } else {
-            document.getElementById('inspectionSection').classList.add('active');
-            document.getElementById('btnInspection').classList.add('active');
-            syncInspectionOpening();
+    if(tab === "inspection") syncInspectionOpening();
+    if(tab === "account"){ calculateAccount(); renderTariffInputs(); }
+    if(tab === "flour") renderFlourMovement();
+    renderAll();
+}
+
+function getSackOutput(){
+    return (db.settings.sackOutput !== undefined) ? db.settings.sackOutput : 725; // إنتاجية الشيكارة (قابلة للتعديل من المدخلات)
+}
+
+function formatDetailsRaw(value){
+    let output = getSackOutput();
+    let sacks = Math.floor(value / output);
+    let leftover = Math.round((value % output) * 1000) / 1000;
+    return `<b>${sacks} شيكارة</b> (${(sacks * output).toFixed(2)} رغيف) + <b>${leftover} رغيف</b>`;
+}
+
+function calcGeneral(){
+    let opening = num($('openingBalance') ? $('openingBalance').value : 0);
+    let prevSales = num($('prevDaySales') ? $('prevDaySales').value : 0);
+    let todaySales = num($('todaySales') ? $('todaySales').value : 0);
+
+    let remaining = opening - todaySales;
+    let roundedPrev = roundedReplenishmentLoaves(prevSales, getSackOutput());
+    let finalClosing = remaining + roundedPrev;
+
+    if($('genRemainingBefore')) $('genRemainingBefore').innerHTML = formatDetailsRaw(remaining);
+    if($('genFinalNextOpening')) $('genFinalNextOpening').innerHTML = formatDetailsRaw(finalClosing);
+
+    // حساب المديونية اليومية تلقائياً بناءً على القرار الوزاري وصور القرار
+    let fuel = db.settings.fuel || "gas";
+    let bread = db.settings.bread || "mawy";
+    let entryDate = $('genDate') ? $('genDate').value : todayStr();
+    let piasterRate = getMinistryPiasterPerLoaf(fuel, bread, entryDate);
+    let dailyDue = (todaySales * piasterRate) / 100; // تحويل لجنيه
+
+    let dueColor = dailyDue >= 0 ? "color:#27ae60;" : "color:#c0392b;";
+    let dueText = dailyDue >= 0 ? `مستحق لصالح المخبز: ${dailyDue.toFixed(2)} جنيه` : `مديونية على المخبز: ${Math.abs(dailyDue).toFixed(2)} جنيه`;
+    if($('genDailyDue')) {
+        $('genDailyDue').innerHTML = `<span style="${dueColor}">${dueText} (بواقع ${piasterRate} قرش للرغيف)</span>`;
+    }
+
+    syncInspectionOpening();
+}
+
+function saveGeneral(){
+    let date = $('genDate').value;
+    let opening = num($('openingBalance').value);
+    let prevSales = num($('prevDaySales').value);
+    let sales = num($('todaySales').value);
+    let fuel = db.settings.fuel || "gas";
+    let bread = db.settings.bread || "mawy";
+
+    if(!date){ alert("برجاء اختيار التاريخ"); return; }
+
+    let index = db.history.findIndex(item => item.date === date);
+
+    // تنبيهات غير معطّلة (بتنبه بس مش بتمنع الحفظ)
+    if(index < 0 && db.history.length > 0){
+        let last = db.history.slice().sort((a, b) => a.date.localeCompare(b.date)).pop();
+        let expectedClosing = num(last.opening) - num(last.sales) + roundedReplenishmentLoaves(last.prevSales, getSackOutput());
+
+        let lastDateObj = new Date(last.date);
+        let thisDateObj = new Date(date);
+        let dayDiff = Math.round((thisDateObj - lastDateObj) / 86400000);
+
+        if(dayDiff > 1){
+            alert("⚠️ تنبيه: فيه فجوة " + (dayDiff - 1) + " يوم متسجلتش بين آخر يومية (" + last.date + ") واليوم ده. تأكد إنك مش ناسي تسجل أيام.");
+        }
+        if(Math.abs(opening - expectedClosing) > 0.01){
+            alert("⚠️ تنبيه: الرصيد الافتتاحي اللي دخلته (" + opening + ") مش مطابق للرصيد الختامي المتوقع من آخر يومية (" + expectedClosing.toFixed(2) + "). تأكد إنها مش غلطة كتابة.");
         }
     }
 
-    function formatDetailsRaw(val) {
-        let sacks = Math.floor(val / 725);
-        let leftover = val % 725;
-        return `<b>${sacks} شيكارة</b> (${sacks * 725} رغيف) + <b>${leftover} رغيف</b>`;
+    let record = { date, opening, prevSales, sales, fuel, bread };
+
+    if(index >= 0){
+        db.history[index] = record;
+        alert("تم تحديث اليومية وحساب المستحقات بنجاح");
+    } else {
+        db.history.push(record);
+        alert("تم حفظ اليومية وحساب المستحقات بنجاح");
     }
 
-    function calcGeneral() {
-        let opening = Number(document.getElementById('openingBalance').value) || 0;
-        let prevSales = Number(document.getElementById('prevDaySales').value) || 0;
-        let todaySales = Number(document.getElementById('todaySales').value) || 0;
+    db.history.sort((a, b) => a.date.localeCompare(b.date));
+    saveAll();
+    prepareNextDayAuto();
+    renderAll();
+    calculateAccount();
+}
 
-        let remainingBefore = opening - todaySales;
-        let finalClosing = remainingBefore + prevSales;
+function prepareNextDayAuto(){
+    if(db.history.length === 0) return;
+    let last = db.history.slice().sort((a, b) => a.date.localeCompare(b.date)).pop();
+    let closing = num(last.opening) - num(last.sales) + roundedReplenishmentLoaves(last.prevSales, getSackOutput());
 
-        document.getElementById('genRemainingBefore').innerHTML = formatDetailsRaw(remainingBefore);
-        document.getElementById('genFinalNextOpening').innerHTML = formatDetailsRaw(finalClosing);
-        syncInspectionOpening();
+    let nextDate = new Date(last.date);
+    nextDate.setDate(nextDate.getDate() + 1);
+    let nextDateStr = nextDate.toISOString().split("T")[0];
+
+    if($('genDate')) $('genDate').value = nextDateStr;
+    if($('openingBalance')) { $('openingBalance').value = closing; $('openingBalance').readOnly = true; }
+    if($('prevDaySales')) { $('prevDaySales').value = last.sales; $('prevDaySales').readOnly = true; }
+    if($('todaySales')) $('todaySales').value = 0;
+    
+    calcGeneral();
+}
+
+function syncInspectionOpening(){
+    if($('inspOpening') && $('openingBalance')) {
+        $('inspOpening').value = $('openingBalance').value;
+        calcInspection();
     }
+}
 
-    function syncInspectionOpening() {
-        let openingVal = document.getElementById('openingBalance').value;
-        let inspOp = document.getElementById('inspOpening');
-        if(inspOp) {
-            inspOp.value = openingVal;
-            calcInspection();
-        }
-    }
+function calcInspection(){
+    let opening = num($('inspOpening').value);
+    let closedSacks = num($('inspClosedSacks').value);
+    let machineSales = num($('inspMachineSales').value);
+    let waitingCount = num($('inspWaitingCount').value);
+    let baked = num($('inspBaked').value);
+    let traysCount = num($('inspTraysCount').value);
 
-    function calcInspection() {
-        let opening = Number(document.getElementById('inspOpening').value) || 0;
-        let closedSacks = Number(document.getElementById('inspClosedSacks').value) || 0;
-        let machineSales = Number(document.getElementById('inspMachineSales').value) || 0;
-        let waitingCount = Number(document.getElementById('inspWaitingCount').value) || 0;
-        let baked = Number(document.getElementById('inspBaked').value) || 0;
-        let traysCount = Number(document.getElementById('inspTraysCount').value) || 0;
+    let output = getSackOutput();
+    let totalSacks = Math.floor(opening / output);
+    let leftover = Math.round((opening % output) * 1000) / 1000;
+    
+    if($('inspTotalSacksInfo')) $('inspTotalSacksInfo').innerText = `${totalSacks} شيكارة (${(totalSacks * output).toFixed(2)} رغيف) + ${leftover} رغيف`;
 
-        let totalSacks = Math.floor(opening / 725);
-        let leftover = opening % 725;
-        document.getElementById('inspTotalSacksInfo').innerText = `${totalSacks} شيكارة (${totalSacks * 725} رغيف) + ${leftover} رغيف`;
+    let sacksToKnead = totalSacks - closedSacks;
+    let validSacksToKnead = sacksToKnead > 0 ? sacksToKnead : 0;
+    if($('inspSacksToKnead')) $('inspSacksToKnead').innerHTML = `<b>${validSacksToKnead} شيكارة</b> (${(validSacksToKnead * output).toFixed(2)} رغيف)`;
 
-        let sacksToKnead = totalSacks - closedSacks;
-        document.getElementById('inspSacksToKnead').innerText = `${sacksToKnead > 0 ? sacksToKnead : 0} شيكارة (${(sacksToKnead > 0 ? sacksToKnead : 0) * 725} رغيف)`;
+    let delivered = machineSales - waitingCount;
+    if(delivered < 0) delivered = 0;
+    if($('inspDeliveredCalc')) $('inspDeliveredCalc').innerText = delivered;
 
-        let delivered = machineSales - waitingCount;
-        if(delivered < 0) delivered = 0;
-        document.getElementById('inspDeliveredCalc').innerText = delivered;
+    let traysLoaves = traysCount * 24;
+    if($('inspTraysLoaves')) $('inspTraysLoaves').innerText = traysLoaves;
 
-        let traysLoaves = traysCount * 24;
-        document.getElementById('inspTraysLoaves').innerText = traysLoaves;
+    let expectedInProcess = opening - (closedSacks * output);
+    let expectedMixer = expectedInProcess - (delivered + baked + traysLoaves);
 
-        let expectedInProcess = opening - (closedSacks * 725);
-        let expectedMixer = expectedInProcess - (delivered + baked + traysLoaves);
+    if($('inspMixerExpected')) $('inspMixerExpected').innerHTML = `<b>${Math.abs(expectedMixer).toFixed(2)} رغيف</b> (${expectedMixer.toFixed(2)})`;
 
-        document.getElementById('inspMixerExpected').innerHTML = formatDetailsRaw(Math.abs(expectedMixer)) + ` (${expectedMixer} رغيف)`;
-        
-        let statusEl = document.getElementById('inspStatus');
-        if(expectedMixer < -5) {
-            statusEl.innerHTML = `⚠️ في عجز محتمل بمقدار ${Math.abs(expectedMixer)} رغيف. راجع الأرقام.`;
+    let statusEl = $('inspStatus');
+    if(statusEl){
+        if(expectedMixer < -5){
+            statusEl.innerHTML = `⚠️ في عجز محتمل بمقدار ${Math.abs(expectedMixer).toFixed(2)} رغيف.`;
             statusEl.style.color = "#c0392b";
         } else {
             statusEl.innerHTML = `✅ الحسبة سليمة والوضع تمام.`;
             statusEl.style.color = "#27ae60";
         }
     }
+}
 
-    function saveGeneral() {
-        let date = document.getElementById('genDate').value;
-        let opening = document.getElementById('openingBalance').value;
-        let prevSales = document.getElementById('prevDaySales').value || 0;
-        let sales = document.getElementById('todaySales').value || 0;
+function computeAccountTotals(filtered){
+    let totalDues = 0;
+    let totalLoaves = 0;
+    let totalFlourCost = 0;
+    filtered.forEach(h => {
+        let piasterRate = getMinistryPiasterPerLoaf(h.fuel || db.settings.fuel, h.bread || db.settings.bread, h.date);
+        totalDues += (num(h.sales) * piasterRate) / 100;
+        totalLoaves += num(h.sales);
+        totalFlourCost += estimateFlourCost(h.sales);
+    });
+    return { totalDues, totalLoaves, totalFlourCost };
+}
 
-        if(!date || !opening || !sales) {
-            alert('برجاء إدخال التاريخ، الرصيد الافتتاحي ومبيعات اليوم.');
-            return;
-        }
+function calculateAccount(){
+    let table = $('accountTable');
+    if(!table) return;
+    let from = $('accountFrom') ? $('accountFrom').value : '';
+    let to = $('accountTo') ? $('accountTo').value : '';
 
-        let history = JSON.parse(localStorage.getItem('gen_history')) || [];
-        let existingIndex = history.findIndex(i => i.date === date);
+    let html = "";
+    let filtered = db.history.filter(h => (!from || h.date >= from) && (!to || h.date <= to));
 
-        if(existingIndex >= 0) {
-            history[existingIndex] = { date, opening, prevSales, sales };
-            alert('تم تحديث اليومية بنجاح! 🔄');
-        } else {
-            history.push({ date, opening, prevSales, sales });
-            alert('تم حفظ يومية اليوم وترحيل الحساب لليوم التالي بنجاح! 💾');
-        }
+    filtered.forEach(h => {
+        let piasterRate = getMinistryPiasterPerLoaf(h.fuel || db.settings.fuel, h.bread || db.settings.bread, h.date);
+        let due = (num(h.sales) * piasterRate) / 100;
+        let closing = num(h.opening) - num(h.sales) + roundedReplenishmentLoaves(h.prevSales, getSackOutput());
+        let sacksConsumed = num(h.sales) / getSackOutput();
 
-        history.sort((a, b) => new Date(a.date) - new Date(b.date));
-        localStorage.setItem('gen_history', JSON.stringify(history));
+        let badgeColor = due >= 0 ? "color:#27ae60;" : "color:#c0392b;";
+        let dueLabel = due >= 0 ? "مستحق لي" : "مديونية عليّ";
+        html += `<tr>
+            <td>${h.date}</td><td>${num(h.opening)}</td><td>${closing}</td><td>${sacksConsumed.toFixed(2)}</td>
+            <td style="${badgeColor} font-weight:bold;">${dueLabel}: ${Math.abs(due).toFixed(2)} جـ</td>
+        </tr>`;
+    });
 
-        prepareNextDayAuto(history);
-        loadGeneralHistory();
-        calcGeneral();
+    table.innerHTML = html || '<tr><td colspan="5">لا توجد بيانات في الفترة المحددة</td></tr>';
+    let totals = computeAccountTotals(filtered);
+    let overallColor = totals.totalDues >= 0 ? "#27ae60" : "#c0392b";
+    let overallLabel = totals.totalDues >= 0 ? "مستحق لي" : "مديونية عليّ";
+    if($('accountResult')) $('accountResult').innerHTML = `<b>إجمالي الأرغفة المباعة:</b> ${totals.totalLoaves} رغيف<br><b>الإجمالي:</b> <span style="color:${overallColor}; font-size:18px; font-weight:bold;">${overallLabel}: ${Math.abs(totals.totalDues).toFixed(2)} جنيه</span>`;
+}
+
+function renderQuickSummary(){
+    let box = $('quickSummaryBox');
+    if(!box) return;
+    if(db.history.length === 0){
+        box.innerHTML = "لسه معندكش أي يومية متسجلة.";
+        return;
+    }
+    let sorted = db.history.slice().sort((a, b) => a.date.localeCompare(b.date));
+    let last = sorted[sorted.length - 1];
+    let closing = num(last.opening) - num(last.sales) + roundedReplenishmentLoaves(last.prevSales, getSackOutput());
+    let totals = computeAccountTotals(db.history);
+    let overallColor = totals.totalDues >= 0 ? "#27ae60" : "#c0392b";
+    let overallLabel = totals.totalDues >= 0 ? "مستحق لي" : "مديونية عليّ";
+
+    box.innerHTML = `آخر يومية: <b>${last.date}</b> — الرصيد الختامي: <b>${closing}</b> رغيف<br>
+    الإجمالي التراكمي: <span style="color:${overallColor}; font-weight:bold;">${overallLabel}: ${Math.abs(totals.totalDues).toFixed(2)} جنيه</span>`;
+}
+
+function loadGeneralHistory(){
+    let list = $('genHistoryList');
+    if(!list) return;
+    list.innerHTML = "";
+    if(db.history.length === 0){ list.innerHTML = "لا توجد سجلات."; return; }
+
+    db.history.slice().reverse().forEach((item) => {
+        let final = num(item.opening) - num(item.sales) + roundedReplenishmentLoaves(item.prevSales, getSackOutput());
+        let origIndex = db.history.findIndex(h => h.date === item.date);
+
+        let card = document.createElement('div');
+        card.className = 'history-card';
+
+        let main = document.createElement('div');
+        main.className = 'history-main';
+
+        let info = document.createElement('div');
+        info.innerHTML = `<b>${item.date}</b> | مبيعات: ${item.sales} | الختامي: <b>${final}</b>`;
+
+        let actions = document.createElement('div');
+
+        let editBtn = document.createElement('button');
+        editBtn.className = 'btn-small btn-orange';
+        editBtn.textContent = 'تعديل';
+        editBtn.addEventListener('click', function(){ editRecord(origIndex); });
+
+        let delBtn = document.createElement('button');
+        delBtn.className = 'btn-small btn-red';
+        delBtn.textContent = 'حذف';
+        delBtn.addEventListener('click', function(){ deleteRecord(origIndex); });
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+        main.appendChild(info);
+        main.appendChild(actions);
+        card.appendChild(main);
+        list.appendChild(card);
+    });
+}
+
+function editRecord(index){
+    let item = db.history[index];
+    $('genDate').value = item.date;
+    if($('openingBalance')) $('openingBalance').readOnly = false;
+    $('openingBalance').value = item.opening;
+    if($('prevDaySales')) $('prevDaySales').readOnly = false;
+    $('prevDaySales').value = item.prevSales;
+    $('todaySales').value = item.sales;
+    calcGeneral();
+    switchTab('general');
+}
+
+function deleteRecord(index){
+    pendingDeleteIndex = index;
+    if($('confirmDeleteModal')) $('confirmDeleteModal').style.display = 'block';
+}
+
+function confirmDeleteYes(){
+    if(pendingDeleteIndex !== null){
+        db.history.splice(pendingDeleteIndex, 1);
+        saveAll();
+        renderAll();
+        calculateAccount();
+    }
+    pendingDeleteIndex = null;
+    if($('confirmDeleteModal')) $('confirmDeleteModal').style.display = 'none';
+}
+
+function confirmDeleteNo(){
+    pendingDeleteIndex = null;
+    if($('confirmDeleteModal')) $('confirmDeleteModal').style.display = 'none';
+}
+
+function openMonthlyReport(){
+    let tbody = $('reportTableBody');
+    if(!tbody) return;
+    tbody.innerHTML = db.history.length === 0 ? '<tr><td colspan="5">لا توجد بيانات</td></tr>' :
+        db.history.map(i => `<tr>
+            <td>${i.date}</td><td>${i.opening}</td><td>${i.sales}</td><td>${i.prevSales}</td><td>${(num(i.opening)-num(i.sales))+num(i.prevSales)}</td>
+        </tr>`).join('');
+    if($('printModal')) $('printModal').style.display = 'block';
+}
+
+function closeMonthlyReport(){
+    if($('printModal')) $('printModal').style.display = 'none';
+}
+
+// تقريب عدد الشكاير الموردة لأقرب شيكارة كاملة: الكسر أقل من 400 رغيف يتجاهل، 400 أو أكتر يُحسب شيكارة كاملة
+function roundSacksWithThreshold(loaves, output){
+    let whole = Math.floor(num(loaves) / output);
+    let remainder = num(loaves) - (whole * output);
+    return remainder >= 400 ? whole + 1 : whole;
+}
+
+// قيمة الاستعاضة بعد تقريبها لأقرب شيكارة كاملة، مرتجعة بالرغيف (تُستخدم في ترحيل الرصيد)
+function roundedReplenishmentLoaves(prevSales, output){
+    return roundSacksWithThreshold(prevSales, output) * output;
+}
+
+function renderFlourMovement(){
+    let tbody = $('flourMoveTable');
+    if(!tbody) return;
+
+    let output = getSackOutput();
+    let sortedHistory = db.history.slice().sort((a, b) => a.date.localeCompare(b.date));
+
+    if(sortedHistory.length === 0){
+        tbody.innerHTML = '<tr><td colspan="5">لا توجد بيانات مبيعات بعد</td></tr>';
+        return;
     }
 
-    function prepareNextDayAuto(history) {
-        if(history.length === 0) return;
-        history.sort((a, b) => new Date(a.date) - new Date(b.date));
-        let lastRecord = history[history.length - 1];
-        let op = Number(lastRecord.opening) || 0;
-        let prv = Number(lastRecord.prevSales) || 0;
-        let sls = Number(lastRecord.sales) || 0;
-        let lastFinalClosing = (op - sls) + prv;
+    let opening = sortedHistory.length ? (num(sortedHistory[0].opening) / output) : 0;
+    let html = "";
 
-        let nextDateObj = new Date(lastRecord.date);
-        if (isNaN(nextDateObj.getTime())) {
-            nextDateObj = new Date();
-        }
-        nextDateObj.setDate(nextDateObj.getDate() + 1);
+    sortedHistory.forEach(h => {
+        let delivered = roundSacksWithThreshold(h.prevSales, output);  // استعاضة أمس = توريد دقيق اليوم (مقرّب لأقرب شيكارة كاملة)
+        let consumed = num(h.sales) / output;         // استهلاك اليوم حسب المبيعات
+        let closing = opening + delivered - consumed;
 
-        document.getElementById('genDate').value = nextDateObj.toISOString().split('T')[0];
-        document.getElementById('openingBalance').value = lastFinalClosing;
-        document.getElementById('prevDaySales').value = prv;
-        document.getElementById('todaySales').value = '';
-    }
+        html += `<tr>
+            <td>${h.date}</td>
+            <td>${opening.toFixed(2)}</td>
+            <td>${delivered} <span style="color:#B8862E;font-size:11px;">(تقريبي)</span></td>
+            <td>${consumed.toFixed(2)}</td>
+            <td style="font-weight:bold;">${closing.toFixed(2)}</td>
+        </tr>`;
 
-    function loadGeneralHistory() {
-        let history = JSON.parse(localStorage.getItem('gen_history')) || [];
-        let list = document.getElementById('genHistoryList');
-        if(history.length === 0) {
-            list.innerHTML = 'لا توجد سجلات محفوظة.';
-            return;
-        }
-        let html = '';
-        let displayHistory = [...history].reverse();
-        displayHistory.forEach((i) => {
-            let originalIndex = history.findIndex(item => item.date === i.date);
-            let final = (Number(i.opening) - Number(i.sales)) + Number(i.prevSales);
-            html += `<div class="history-card">
-                <div><b>${i.date}</b> | الختامي: <b>${final}</b></div>
-                <div>
-                    <button type="button" class="btn-edit" onclick="editRecord('${i.date}', '${i.opening}', '${i.prevSales}', '${i.sales}')">تعديل</button>
-                    <button type="button" class="btn-delete" onclick="deleteRecord(${originalIndex})">حذف</button>
-                </div>
-            </div>`;
+        opening = closing;
+    });
+
+    tbody.innerHTML = html;
+}
+
+function renderTariffInputs(){
+    let tbody = $('tariffTable');
+    if(!tbody) return;
+
+    if($('settingFlourPrice')) $('settingFlourPrice').value = db.settings.flourPricePerSack;
+    if($('settingSackOutput')) $('settingSackOutput').value = db.settings.sackOutput;
+
+    let fuel = db.settings.fuel || "gas";
+    let bread = db.settings.bread || "mawy";
+    let key = fuel + "_" + bread;
+
+    if($('tariffRateColHeader')) $('tariffRateColHeader').textContent = `القيمة (قرش لكل رغيف) — ${breadName(bread)} / ${fuelName(fuel)}`;
+
+    let periods = db.settings.tariffPeriods.slice().sort((a, b) => a.date.localeCompare(b.date));
+    tbody.innerHTML = "";
+
+    periods.forEach((p, i) => {
+        let tr = document.createElement('tr');
+
+        let tdDate = document.createElement('td');
+        let dateInp = document.createElement('input');
+        dateInp.type = 'date';
+        dateInp.value = p.date;
+        dateInp.addEventListener('change', function(){
+            let current = db.settings.tariffPeriods.slice().sort((a, b) => a.date.localeCompare(b.date));
+            current[i].date = dateInp.value;
+            db.settings.tariffPeriods = current;
+            saveSettings();
         });
-        list.innerHTML = html;
-    }
+        tdDate.appendChild(dateInp);
+        tr.appendChild(tdDate);
 
-    function editRecord(date, opening, prevSales, sales) {
-        document.getElementById('genDate').value = date;
-        document.getElementById('openingBalance').value = opening;
-        document.getElementById('prevDaySales').value = prevSales;
-        document.getElementById('todaySales').value = sales;
-        calcGeneral();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+        let tdRate = document.createElement('td');
+        let rateInp = document.createElement('input');
+        rateInp.type = 'number';
+        rateInp.step = 'any';
+        rateInp.value = (p[key] !== undefined) ? p[key] : 0;
+        rateInp.addEventListener('change', function(){
+            let current = db.settings.tariffPeriods.slice().sort((a, b) => a.date.localeCompare(b.date));
+            current[i][key] = num(rateInp.value);
+            db.settings.tariffPeriods = current;
+            saveSettings();
+            calculateAccount();
+            renderQuickSummary();
+        });
+        tdRate.appendChild(rateInp);
+        tr.appendChild(tdRate);
 
-    function deleteRecord(index) {
-        if(!confirm('هل أنت متأكد من حذف هذا السجل؟')) return;
-        let history = JSON.parse(localStorage.getItem('gen_history')) || [];
-        history.splice(index, 1);
-        localStorage.setItem('gen_history', JSON.stringify(history));
+        let tdDel = document.createElement('td');
+        let delBtn = document.createElement('button');
+        delBtn.className = 'btn-small btn-red';
+        delBtn.textContent = 'حذف';
+        delBtn.addEventListener('click', function(){
+            let current = db.settings.tariffPeriods.slice().sort((a, b) => a.date.localeCompare(b.date));
+            if(current.length <= 1){ alert("لازم يفضل فترة تعريفة واحدة على الأقل"); return; }
+            current.splice(i, 1);
+            db.settings.tariffPeriods = current;
+            saveSettings();
+            renderTariffInputs();
+        });
+        tdDel.appendChild(delBtn);
+        tr.appendChild(tdDel);
 
-        if(history.length > 0) {
-            prepareNextDayAuto(history);
-        } else {
-            document.getElementById('genDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('openingBalance').value = '';
-            document.getElementById('prevDaySales').value = '';
-            document.getElementById('todaySales').value = '';
-        }
-        loadGeneralHistory();
-        calcGeneral();
-    }
+        tbody.appendChild(tr);
+    });
+}
 
-    function clearLocalStorageData() {
-        if(confirm('هل تريد مسح السجلات؟')) {
-            localStorage.removeItem('gen_history');
-            location.reload();
-        }
-    }
+function readTariffInputsFromTable(){
+    return db.settings.tariffPeriods.slice().sort((a, b) => a.date.localeCompare(b.date));
+}
 
-    function openMonthlyReport() {
-        let history = JSON.parse(localStorage.getItem('gen_history')) || [];
-        let tbody = document.getElementById('reportTableBody');
-        tbody.innerHTML = history.length === 0 ? '<tr><td colspan="5">لا توجد بيانات</td></tr>' : 
-            history.map(i => `<tr><td>${i.date}</td><td>${i.opening}</td><td>${i.sales}</td><td>${i.prevSales}</td><td>${(Number(i.opening)-Number(i.sales))+Number(i.prevSales)}</td></tr>`).join('');
-        document.getElementById('printModal').style.display = 'block';
-    }
-
-    function closeMonthlyReport() {
-        document.getElementById('printModal').style.display = 'none';
-    }
+function renderAll(){
+    loadGeneralHistory();
+    renderFlourMovement();
+    renderQuickSummary();
+}
 </script>
-
+</div>
 </body>
 </html>
